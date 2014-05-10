@@ -1,0 +1,14 @@
+{
+  "name": "stacktrace",
+  "main": "./lib/stacktrace",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "activationEvents": ["stacktrace:toggle"],
+  "repository": "https://github.com/atom/stacktrace",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {
+  }
+}
