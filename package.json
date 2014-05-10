@@ -3,12 +3,15 @@
   "main": "./lib/main",
   "version": "0.0.0",
   "description": "Navigate stacktraces within Atom.",
-  "activationEvents": ["stacktrace:enter"],
+  "activationEvents": [
+    "stacktrace:enter"
+  ],
   "repository": "https://github.com/smashwilson/stacktrace",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
   },
   "dependencies": {
+    "jssha": "^1.5.0"
   }
 }
