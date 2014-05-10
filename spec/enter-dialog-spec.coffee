@@ -15,7 +15,7 @@ describe 'EnterDialog', ->
 
     d = new EnterDialog()
     d.traceEditor.setText(TRACE)
-    d.accept()
+    d.traceIt()
 
     expect(event).toEqual
       trace: TRACE
