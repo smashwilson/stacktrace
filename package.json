@@ -1,6 +1,6 @@
 {
   "name": "stacktrace",
-  "main": "./lib/stacktrace",
+  "main": "./lib/main",
   "version": "0.0.0",
   "description": "Navigate stacktraces within Atom.",
   "activationEvents": ["stacktrace:enter"],

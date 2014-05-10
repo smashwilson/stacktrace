@@ -1,7 +1,7 @@
 {WorkspaceView} = require 'atom'
-Stacktrace = require '../lib/stacktrace'
+Stacktrace = require '../lib/main'
 
-describe "Stacktrace", ->
+describe "Main", ->
   activationPromise = null
 
   beforeEach ->
