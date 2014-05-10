@@ -9,5 +9,13 @@ describe "Stacktrace", ->
     activationPromise = atom.packages.activatePackage('stacktrace')
 
   describe "when the stacktrace:enter event is triggered", ->
-    it 'activates the package'
-    it 'displays the EnterDialog'
+
+    beforeEach ->
+      atom.workspaceView.trigger 'stacktrace:enter'
+      waitsForPromise -> activationPromise
+
+    it 'activates the package', ->
+      expect(atom.packages.isPackageActive 'stacktrace').toBe(true)
+
+    it 'displays the EnterDialog', ->
+      expect(atom.workspaceView.find '.enter-dialog').toExist()
