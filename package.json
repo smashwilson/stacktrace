@@ -2,9 +2,9 @@
   "name": "stacktrace",
   "main": "./lib/stacktrace",
   "version": "0.0.0",
-  "description": "A short description of your package",
-  "activationEvents": ["stacktrace:toggle"],
-  "repository": "https://github.com/atom/stacktrace",
+  "description": "Navigate stacktraces within Atom.",
+  "activationEvents": ["stacktrace:enter"],
+  "repository": "https://github.com/smashwilson/stacktrace",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
