@@ -24,4 +24,6 @@ describe 'Stacktrace', ->
       ]
       expect(lines).toEqual(expected)
 
-    it 'computes the SHA256 checksum of the normalized trace'
+    it 'computes the SHA256 checksum of the normalized trace', ->
+      checksum = '3e325af231517f1e4fbe80f70c2c95296250ba80dc4de90bd5ac9c581506d9a6'
+      expect(trace.getChecksum()).toBe(checksum)

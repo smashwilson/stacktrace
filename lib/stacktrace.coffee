@@ -1,7 +1,15 @@
+jsSHA = require 'jssha'
+
 # Internal: A heuristically parsed and interpreted stacktrace.
 class Stacktrace
 
   constructor: (@frames = []) ->
+
+  # Internal: Compute the SHA256 checksum of the normalized stacktrace.
+  getChecksum: ->
+    body = (frame.line for frame in @frames).join()
+    sha = new jsSHA(body, 'TEXT')
+    sha.getHash('SHA-256', 'HEX')
 
   @parse: (text) ->
     frames = (Frame.parse(line) for line in text.split(/\r?\n/))
