@@ -2,6 +2,8 @@
 
 *Navigate stacktraces within Atom!*
 
+[![Build Status](https://travis-ci.org/smashwilson/stacktrace.svg?branch=master)](https://travis-ci.org/smashwilson/stacktrace?branch=master)
+
 Given a stacktrace from a supported language, this package gives you:
 
  * A mile-high view of the full trace, with a few lines of context on each stack
