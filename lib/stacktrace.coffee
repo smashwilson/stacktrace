@@ -11,6 +11,10 @@ class Stacktrace
     sha = new jsSHA(body, 'TEXT')
     sha.getHash('SHA-256', 'HEX')
 
+  # Internal: Generate a URL that can be used to launch or focus a
+  # {StacktraceView}.
+  getUrl: -> @url ?= "stacktrace://trace/#{@getChecksum()}"
+
   @parse: (text) ->
     frames = (Frame.parse(line) for line in text.split(/\r?\n/))
     new Stacktrace(frames)
