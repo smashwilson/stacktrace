@@ -16,17 +16,26 @@ class Stacktrace
   getUrl: -> @url ?= "stacktrace://trace/#{@getChecksum()}"
 
   @parse: (text) ->
-    frames = (Frame.parse(rawLine) for rawLine in text.split(/\r?\n/))
+    frames = (parseRubyFrame(rawLine) for rawLine in text.split(/\r?\n/))
     new Stacktrace(frames)
 
 # Internal: A single stack frame within a {Stacktrace}.
 class Frame
 
-  constructor: (@rawLine) ->
+  constructor: (@rawLine, @path, @lineNumber, @functionName) ->
 
-  @parse: (rawLine) ->
-    # Normalize leading and trailing whitespace.
-    new Frame(rawLine.trim())
+# Internal: Parse a Ruby stack frame. This is a simple placeholder until I
+# put together a class hierarchy to handle frame recognition and parsing.
+parseRubyFrame = (rawLine) ->
+  [raw, path, lineNumber, functionName, message] = rawLine.trim().match /// ^
+    (?:from \s+)?  # On all lines but the first
+    ([^:]+) :  # File path
+    (\d+) :    # Line number
+    in \s* ` ([^']+) ' # Function name
+    (?: : (.*))? # Error message, only on the first
+  ///
+
+  new Frame(raw, path, lineNumber, functionName)
 
 module.exports =
   Stacktrace: Stacktrace

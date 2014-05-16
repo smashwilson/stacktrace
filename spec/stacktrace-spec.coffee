@@ -58,4 +58,4 @@ describe 'Stacktrace', ->
         'toplevel'
         '<main>'
       ]
-      expect(functionNames).toBe(expected)
+      expect(functionNames).toEqual(expected)
