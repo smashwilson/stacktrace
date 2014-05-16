@@ -7,7 +7,7 @@ class Stacktrace
 
   # Internal: Compute the SHA256 checksum of the normalized stacktrace.
   getChecksum: ->
-    body = (frame.line for frame in @frames).join()
+    body = (frame.rawLine for frame in @frames).join()
     sha = new jsSHA(body, 'TEXT')
     sha.getHash('SHA-256', 'HEX')
 
@@ -16,17 +16,17 @@ class Stacktrace
   getUrl: -> @url ?= "stacktrace://trace/#{@getChecksum()}"
 
   @parse: (text) ->
-    frames = (Frame.parse(line) for line in text.split(/\r?\n/))
+    frames = (Frame.parse(rawLine) for rawLine in text.split(/\r?\n/))
     new Stacktrace(frames)
 
 # Internal: A single stack frame within a {Stacktrace}.
 class Frame
 
-  constructor: (@line) ->
+  constructor: (@rawLine) ->
 
-  @parse: (line) ->
+  @parse: (rawLine) ->
     # Normalize leading and trailing whitespace.
-    new Frame(line.trim())
+    new Frame(rawLine.trim())
 
 module.exports =
   Stacktrace: Stacktrace
