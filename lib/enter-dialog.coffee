@@ -20,6 +20,8 @@ class EnterDialog extends View
   initialize: ->
     @traceEditor.focus()
 
+    @on 'core:cancel', => @cancel()
+
   traceIt: ->
     atom.emit 'stacktrace:accept-trace', trace: @traceEditor.getText()
     @remove()
