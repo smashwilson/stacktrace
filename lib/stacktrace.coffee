@@ -1,5 +1,9 @@
 jsSHA = require 'jssha'
 
+PREFIX = 'stacktrace://trace'
+
+REGISTRY = {}
+
 # Internal: A heuristically parsed and interpreted stacktrace.
 class Stacktrace
 
@@ -13,17 +17,34 @@ class Stacktrace
 
   # Internal: Generate a URL that can be used to launch or focus a
   # {StacktraceView}.
-  getUrl: -> @url ?= "stacktrace://trace/#{@getChecksum()}"
+  getUrl: -> @url ?= "#{PREFIX}/#{@getChecksum()}"
+
+  # Internal: Register this trace in a global map by its URL.
+  register: ->
+    REGISTRY[@getUrl()] = this
+
+  # Internal: Remove this trace from the global map if it had previously been
+  # registered.
+  unregister: ->
+    delete REGISTRY[@getUrl()]
 
   @parse: (text) ->
     frames = (parseRubyFrame(rawLine) for rawLine in text.split(/\r?\n/))
     new Stacktrace(frames, frames[0].message)
 
+  # Internal: Return a registered trace, or null if none match the provided
+  # URL.
+  @forUrl: (url) ->
+    REGISTRY[url]
+
+  # Internal: Clear the global trace registry.
+  @clearRegistry: ->
+    REGISTRY = {}
 
 # Internal: A single stack frame within a {Stacktrace}.
 class Frame
 
-  constructor: (@rawLine, @path, @lineNumber, @functionName, @message) ->
+  constructor: (@rawLine, @path, @lineNumber, @functionName, @message = null) ->
 
 
 # Internal: Parse a Ruby stack frame. This is a simple placeholder until I
@@ -40,5 +61,6 @@ parseRubyFrame = (rawLine) ->
   new Frame(raw, path, lineNumber, functionName, message)
 
 module.exports =
+  PREFIX: PREFIX
   Stacktrace: Stacktrace
   Frame: Frame
