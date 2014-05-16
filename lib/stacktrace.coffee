@@ -3,7 +3,7 @@ jsSHA = require 'jssha'
 # Internal: A heuristically parsed and interpreted stacktrace.
 class Stacktrace
 
-  constructor: (@frames = []) ->
+  constructor: (@frames = [], @message = '') ->
 
   # Internal: Compute the SHA256 checksum of the normalized stacktrace.
   getChecksum: ->
@@ -17,12 +17,14 @@ class Stacktrace
 
   @parse: (text) ->
     frames = (parseRubyFrame(rawLine) for rawLine in text.split(/\r?\n/))
-    new Stacktrace(frames)
+    new Stacktrace(frames, frames[0].message)
+
 
 # Internal: A single stack frame within a {Stacktrace}.
 class Frame
 
-  constructor: (@rawLine, @path, @lineNumber, @functionName) ->
+  constructor: (@rawLine, @path, @lineNumber, @functionName, @message) ->
+
 
 # Internal: Parse a Ruby stack frame. This is a simple placeholder until I
 # put together a class hierarchy to handle frame recognition and parsing.
@@ -32,10 +34,10 @@ parseRubyFrame = (rawLine) ->
     ([^:]+) :  # File path
     (\d+) :    # Line number
     in \s* ` ([^']+) ' # Function name
-    (?: : (.*))? # Error message, only on the first
+    (?: : \s (.*))? # Error message, only on the first
   ///
 
-  new Frame(raw, path, lineNumber, functionName)
+  new Frame(raw, path, lineNumber, functionName, message)
 
 module.exports =
   Stacktrace: Stacktrace
