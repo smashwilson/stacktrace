@@ -19,10 +19,12 @@ Given a stacktrace from a supported language, this package gives you:
 In the true spirit of README-driven development, these are the features that I'd
 like to see in place before I mark it 1.0.
 
-- [ ] Accept stacktraces pasted into a dialog you call up from the command
+- [x] Accept stacktraces pasted into a dialog you call up from the command
   palette.
 - [ ] Present a view that gives you bits of context around each frame of a
-  specific stack.
+  specific stack. *(...)*
+- [ ] Pluggable stacktrace recognition and parsing code.
+- [ ] Map parsed frames to source files on the local filesystem.
 - [ ] While a stacktrace is active, highlight individual lines from the trace
   in open editors.
 - [ ] Provide commands for next-frame, previous-frame, and turning it off.
