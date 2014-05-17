@@ -31,7 +31,7 @@ class FrameView extends View
     @div class: 'frame inset-panel', =>
       @div class: 'panel-heading', =>
         @span class: 'function-name text-highlight inline-block', frame.functionName
-        @span class: 'source-location text-subtle inline-block', =>
+        @span class: 'source-location text-info inline-block pull-right', =>
           @text "#{frame.path} @ #{frame.lineNumber}"
       @div class: 'panel-body padded', =>
         @pre output: 'source', 'Source goes here'
