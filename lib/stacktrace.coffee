@@ -29,7 +29,10 @@ class Stacktrace
     delete REGISTRY[@getUrl()]
 
   @parse: (text) ->
-    frames = (parseRubyFrame(rawLine) for rawLine in text.split(/\r?\n/))
+    frames = []
+    for rawLine in text.split(/\r?\n/)
+      f = parseRubyFrame(rawLine)
+      frames.push f if f?
     new Stacktrace(frames, frames[0].message)
 
   # Internal: Return a registered trace, or null if none match the provided
@@ -50,7 +53,7 @@ class Frame
 # Internal: Parse a Ruby stack frame. This is a simple placeholder until I
 # put together a class hierarchy to handle frame recognition and parsing.
 parseRubyFrame = (rawLine) ->
-  [raw, path, lineNumber, functionName, message] = rawLine.trim().match /// ^
+  m = rawLine.trim().match /// ^
     (?:from \s+)?  # On all lines but the first
     ([^:]+) :  # File path
     (\d+) :    # Line number
@@ -58,7 +61,9 @@ parseRubyFrame = (rawLine) ->
     (?: : \s (.*))? # Error message, only on the first
   ///
 
-  new Frame(raw, path, lineNumber, functionName, message)
+  if m?
+    [raw, path, lineNumber, functionName, message] = m
+    new Frame(raw, path, lineNumber, functionName, message)
 
 module.exports =
   PREFIX: PREFIX
