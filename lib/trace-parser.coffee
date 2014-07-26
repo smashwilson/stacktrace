@@ -1,7 +1,7 @@
 {Stacktrace, Frame} = require './stacktrace'
-util = require 'util'
 fs = require 'fs'
 path = require 'path'
+util = require 'util'
 
 # Internal: Build a Frame instance with a simple DSL.
 #
