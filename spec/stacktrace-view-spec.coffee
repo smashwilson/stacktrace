@@ -29,7 +29,10 @@ describe 'StacktraceView', ->
     trace.register()
     expect(opener(trace.getUrl()).trace).toBe(trace)
 
-  it 'shows the error message'
+  it 'shows the error message', ->
+    text = view.find('.error-message').text()
+    expect(text).toEqual('Boom')
+
   it 'renders a subview for each frame'
 
 describe 'FrameView', ->

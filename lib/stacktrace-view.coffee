@@ -6,7 +6,7 @@ class StacktraceView extends View
   @content: (trace) ->
     @div class: 'stacktrace tool-panel padded', =>
       @div class: 'header panel', =>
-        @h2 trace.message
+        @h2 class: 'error-message', trace.message
       @div class: 'frames', =>
         for frame in trace.frames
           @subview 'frame', new FrameView(frame)
