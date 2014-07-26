@@ -33,7 +33,9 @@ describe 'StacktraceView', ->
     text = view.find('.error-message').text()
     expect(text).toEqual('Boom')
 
-  it 'renders a subview for each frame'
+  it 'renders a subview for each frame', ->
+    vs = view.find('.frame')
+    expect(vs.length).toBe(3)
 
 describe 'FrameView', ->
   [view] = []
