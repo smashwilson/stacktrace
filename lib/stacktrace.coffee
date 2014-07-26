@@ -1,15 +1,18 @@
 jsSHA = require 'jssha'
+traceParser = null
 
 PREFIX = 'stacktrace://trace'
 
 REGISTRY = {}
 
 # Internal: A heuristically parsed and interpreted stacktrace.
+#
 class Stacktrace
 
   constructor: (@frames = [], @message = '') ->
 
   # Internal: Compute the SHA256 checksum of the normalized stacktrace.
+  #
   getChecksum: ->
     body = (frame.rawLine for frame in @frames).join()
     sha = new jsSHA(body, 'TEXT')
@@ -17,23 +20,27 @@ class Stacktrace
 
   # Internal: Generate a URL that can be used to launch or focus a
   # {StacktraceView}.
+  #
   getUrl: -> @url ?= "#{PREFIX}/#{@getChecksum()}"
 
   # Internal: Register this trace in a global map by its URL.
+  #
   register: ->
     REGISTRY[@getUrl()] = this
 
   # Internal: Remove this trace from the global map if it had previously been
   # registered.
+  #
   unregister: ->
     delete REGISTRY[@getUrl()]
 
+  # Public: Parse zero to many Stacktrace instances from a corpus of text.
+  #
+  # text - A raw blob of text.
+  #
   @parse: (text) ->
-    frames = []
-    for rawLine in text.split(/\r?\n/)
-      f = parseRubyFrame(rawLine)
-      frames.push f if f?
-    new Stacktrace(frames, frames[0].message)
+    {traceParser} = require('./trace-parser') unless traceParser?
+    traceParser(text)
 
   # Internal: Return a registered trace, or null if none match the provided
   # URL.
@@ -45,25 +52,10 @@ class Stacktrace
     REGISTRY = {}
 
 # Internal: A single stack frame within a {Stacktrace}.
+#
 class Frame
 
-  constructor: (@rawLine, @path, @lineNumber, @functionName, @message = null) ->
-
-
-# Internal: Parse a Ruby stack frame. This is a simple placeholder until I
-# put together a class hierarchy to handle frame recognition and parsing.
-parseRubyFrame = (rawLine) ->
-  m = rawLine.trim().match /// ^
-    (?:from \s+)?  # On all lines but the first
-    ([^:]+) :  # File path
-    (\d+) :    # Line number
-    in \s* ` ([^']+) ' # Function name
-    (?: : \s (.*))? # Error message, only on the first
-  ///
-
-  if m?
-    [raw, path, lineNumber, functionName, message] = m
-    new Frame(raw, path, lineNumber, functionName, message)
+  constructor: (@rawLine, @path, @lineNumber, @functionName) ->
 
 module.exports =
   PREFIX: PREFIX
