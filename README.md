@@ -23,7 +23,7 @@ like to see in place before I mark it 1.0.
   palette.
 - [ ] Present a view that gives you bits of context around each frame of a
   specific stack. *(...)*
-- [ ] Pluggable stacktrace recognition and parsing code.
+- [x] Pluggable stacktrace recognition and parsing code.
 - [ ] Map parsed frames to source files on the local filesystem.
 - [ ] While a stacktrace is active, highlight individual lines from the trace
   in open editors.
