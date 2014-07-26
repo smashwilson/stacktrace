@@ -1,40 +1,39 @@
 {Stacktrace, Frame} = require './stacktrace'
 fs = require 'fs'
 path = require 'path'
+util = require 'util'
 
 # Internal: Build a Frame instance with a simple DSL.
 #
 class FrameBuilder
 
-  constructor: (@rawLine) ->
-    [@path, @lineNumber, @functionName, @message] = null
+  constructor: (@_rawLine) ->
+    [@_path, @_lineNumber, @_functionName] = []
 
-  path: (@path) ->
+  path: (@_path) ->
 
-  lineNumber: (@lineNumber) ->
+  lineNumber: (@_lineNumber) ->
 
-  functionName: (@functionName) ->
-
-  message: (@message) ->
+  functionName: (@_functionName) ->
 
 # Internal: Use the collected information from a FrameBuilder to instantiate a Frame.
 #
 asFrame = (fb) ->
   required = [
-    { name: 'rawLine', ok: fb.rawLine? }
-    { name: 'path', ok: fb.path? }
-    { name: 'lineNumber', ok: fb.lineNumber? }
-    { name: 'functionName', ok: fb.functionName? }
+    { name: 'rawLine', ok: fb._rawLine? }
+    { name: 'path', ok: fb._path? }
+    { name: 'lineNumber', ok: fb._lineNumber? }
+    { name: 'functionName', ok: fb._functionName? }
   ]
   missing = (r.name for r in required when not r.ok)
 
   unless missing.length is 0
-    e = new Error('Missing required frame attributes.')
+    e = new Error("Missing required frame attributes: #{missing.join ', '}")
     e.missing = missing
     e.rawLine = fb.rawLine
     throw e
 
-  new Frame(fb.rawLine, fb.path, fb.lineNumber, fb.functionName, fb.message)
+  new Frame(fb._rawLine, fb._path, fb._lineNumber, fb._functionName)
 
 allTracers = null
 
@@ -80,7 +79,7 @@ traceParser = (text, tracers = null) ->
     # Mid-stack frame.
     if activeTracer?
       fb = new FrameBuilder(trimmed)
-      activeTracer.consume fb,
+      activeTracer.consume trimmed, fb,
         emitMessage: (m) -> message = m
         emitFrame: -> frames.push asFrame fb
         emitStack: finishStacktrace
@@ -88,13 +87,17 @@ traceParser = (text, tracers = null) ->
     # Outside of a frame. Attempt to recognize the next trace by emitting at least one frame.
     unless activeTracer?
       for t in tracers
-        t.recognize fb,
+        fb = new FrameBuilder(trimmed)
+        t.recognize trimmed, fb,
           emitMessage: (m) -> message = m
           emitFrame: -> frames = [asFrame(fb)]
           emitStack: finishStacktrace
         if message? or frames.length > 0
           activeTracer = t
           break
+
+  # Finalize the last Stacktrace.
+  finishStacktrace() if frames.length > 0
 
   stacks
 
