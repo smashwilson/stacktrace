@@ -2,7 +2,7 @@
 rubyTracer = require '../../lib/parsers/ruby-trace-parser'
 ts = require '../trace-fixtures'
 
-describe 'rubyTraceParser', ->
+describe 'rubyTracer', ->
   describe 'recognition', ->
 
     it 'parses a trace from each Ruby fixture', ->

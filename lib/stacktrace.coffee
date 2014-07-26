@@ -1,4 +1,5 @@
 jsSHA = require 'jssha'
+traceParser = null
 
 PREFIX = 'stacktrace://trace'
 
@@ -33,12 +34,13 @@ class Stacktrace
   unregister: ->
     delete REGISTRY[@getUrl()]
 
+  # Public: Parse zero to many Stacktrace instances from a corpus of text.
+  #
+  # text - A raw blob of text.
+  #
   @parse: (text) ->
-    frames = []
-    for rawLine in text.split(/\r?\n/)
-      f = parseRubyFrame(rawLine)
-      frames.push f if f?
-    new Stacktrace(frames, frames[0].message)
+    {traceParser} = require('./trace-parser') unless traceParser?
+    traceParser(text)
 
   # Internal: Return a registered trace, or null if none match the provided
   # URL.
@@ -54,23 +56,6 @@ class Stacktrace
 class Frame
 
   constructor: (@rawLine, @path, @lineNumber, @functionName) ->
-
-
-# Internal: Parse a Ruby stack frame. This is a simple placeholder until I
-# put together a class hierarchy to handle frame recognition and parsing.
-#
-parseRubyFrame = (rawLine) ->
-  m = rawLine.trim().match /// ^
-    (?:from \s+)?  # On all lines but the first
-    ([^:]+) :  # File path
-    (\d+) :    # Line number
-    in \s* ` ([^']+) ' # Function name
-    (?: : \s (.*))? # Error message, only on the first
-  ///
-
-  if m?
-    [raw, path, lineNumber, functionName, message] = m
-    new Frame(raw, path, lineNumber, functionName, message)
 
 module.exports =
   PREFIX: PREFIX

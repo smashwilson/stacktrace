@@ -6,7 +6,7 @@ describe 'Stacktrace', ->
     [trace, checksum] = []
 
     beforeEach ->
-      trace = Stacktrace.parse(TRACE)
+      [trace] = Stacktrace.parse(TRACE)
       checksum = '9528763b5ab8ef052e2400e39d0f32dbe59ffcd06f039adc487f4f956511691f'
 
     describe 'preparation', ->
