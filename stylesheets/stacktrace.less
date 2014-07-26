@@ -18,6 +18,19 @@
     }
   }
 
+  .frame {
+    .icon-fold, .icon-unfold {
+      cursor: pointer;
+    }
+
+    .icon-unfold { display: none; }
+
+    &.minimized {
+      .icon-unfold { display: inline-block; }
+      .icon-fold { display: none; }
+    }
+  }
+
   &.activated {
     .activate-control { display: none; }
   }
