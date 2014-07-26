@@ -23,6 +23,11 @@ class Stacktrace
   #
   getUrl: -> @url ?= "#{PREFIX}/#{@getChecksum()}"
 
+  # Public: Determine whether or not this Stacktrace is the "active" one. The active Stacktrace is
+  # shown in a bottom navigation panel and highlighted in opened editors.
+  #
+  isActive: -> false
+
   # Internal: Register this trace in a global map by its URL.
   #
   register: ->
@@ -55,7 +60,8 @@ class Stacktrace
 #
 class Frame
 
-  constructor: (@rawLine, @path, @lineNumber, @functionName) ->
+  constructor: (@rawLine, @rawPath, @lineNumber, @functionName) ->
+    @realPath = @rawPath
 
 module.exports =
   PREFIX: PREFIX

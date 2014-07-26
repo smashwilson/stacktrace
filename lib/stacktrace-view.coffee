@@ -4,9 +4,16 @@
 class StacktraceView extends View
 
   @content: (trace) ->
-    @div class: 'stacktrace tool-panel padded', =>
-      @div class: 'header panel', =>
+    tclass = if trace.isActive() then 'activated' else 'deactivated'
+    @div class: "stacktrace tool-panel padded #{tclass}", =>
+      @div class: 'panel padded', =>
         @h2 class: 'error-message', trace.message
+        @p class: 'activate-control', =>
+          @button class: 'btn btn-primary selected inline-block', click: 'activate', 'Activate'
+          @span class: 'inline-block', 'to navigate around this stacktrace.'
+        @p class: 'deactivate-control', =>
+          @button class: 'btn btn-primary inline-block', 'Deactivate'
+          @span class: 'inline-block', 'to close the stacktrace navigation panel.'
       @div class: 'frames', =>
         for frame in trace.frames
           @subview 'frame', new FrameView(frame)
@@ -32,7 +39,7 @@ class FrameView extends View
       @div class: 'panel-heading', =>
         @span class: 'function-name text-highlight inline-block', frame.functionName
         @span class: 'source-location text-info inline-block pull-right', =>
-          @text "#{frame.path} @ #{frame.lineNumber}"
+          @text "#{frame.rawPath} @ #{frame.lineNumber}"
       @div class: 'panel-body padded', =>
         @pre output: 'source', 'Source goes here'
 

@@ -8,4 +8,21 @@
   &.enter-dialog .editor {
     height: 300px;
   }
+
+  .frame .panel-heading {
+    font-size: 130%;
+
+    .source-location:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+
+  &.activated {
+    .activate-control { display: none; }
+  }
+
+  &.deactivated {
+    .deactivate-control { display: none; }
+  }
 }
