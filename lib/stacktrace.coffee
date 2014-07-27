@@ -144,9 +144,9 @@ class Frame
   # Public: Asynchronously collect n lines of context around the specified line number in this
   # frame's source file.
   #
-  # n        - The number of lines of context to collect on *each* side of the error line. The error
-  #            line will always be `lines[n]` and `lines.length` will be `n * 2 + 1`.
-  # callback - Invoked with any errors or an Array containing the relevant lines.
+  # n        - The number of lines of context to collect on *each* side of the error line.
+  # callback - Invoked with any errors, or an Array containing the relevant lines and the index of
+  #            the line in the Array that corresponds to the actual frame.
   #
   getContext: (n, callback) ->
     # Notice that @lineNumber is one-indexed, not zero-indexed.
@@ -155,7 +155,18 @@ class Frame
       toLine: @lineNumber + n
       trim: false
       keepLastEmptyLine: true
-    chomp fs.createReadStream(@realPath), range, callback
+    chomp fs.createReadStream(@realPath), range, (err, lines) =>
+      if err?
+        callback(err)
+      else
+        # Determine which line is the actual trace line.
+        if lines.length < (2 * n + 1) and range.fromLine < 0
+          # The front is cut off.
+          traceLine = @lineNumber - 1
+        else
+          traceLine = n
+
+        callback(null, lines, traceLine)
 
   navigateTo: ->
     position = [@lineNumber - 1, 0]
