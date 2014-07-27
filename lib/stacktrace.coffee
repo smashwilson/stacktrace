@@ -81,6 +81,17 @@ class Frame
       keepLastEmptyLine: true
     chomp fs.createReadStream(@realPath), range, callback
 
+  navigateTo: ->
+    position = [@lineNumber - 1, 0]
+    promise = atom.workspace.open @realPath, initialLine: position[0]
+    promise.then (editor) ->
+      editor.setCursorBufferPosition position
+      for ev in atom.workspaceView.getEditorViews()
+        editorView = ev if ev.getEditor() is editor
+      if editorView?
+        editorView.scrollToBufferPosition position, center: true
+
+
 module.exports =
   PREFIX: PREFIX
   Stacktrace: Stacktrace

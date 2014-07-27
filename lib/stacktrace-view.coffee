@@ -64,8 +64,7 @@ class FrameView extends View
       else
         @source.getEditor().setText lines.join("\n")
 
-  navigate: ->
-    console.log "Navigate"
+  navigate: -> @frame.navigateTo()
 
   minimize: ->
     @addClass 'minimized'
