@@ -1,6 +1,7 @@
 EnterDialog = require './enter-dialog'
 {Stacktrace} = require './stacktrace'
 {StacktraceView} = require './stacktrace-view'
+editorDecorator = require './editor-decorator'
 
 module.exports =
 
@@ -13,6 +14,10 @@ module.exports =
       text = (s.getText() for s in (selections or [])).join ''
       atom.emit 'stacktrace:accept-trace', trace: text
 
+    atom.workspace.eachEditor editorDecorator
+    Stacktrace.on 'active-changed', ->
+      editorDecorator(e) for e in atom.workspace.getEditors()
+
     StacktraceView.registerIn(atom.workspace)
 
     atom.on 'stacktrace:accept-trace', ({trace}) =>
@@ -21,6 +26,7 @@ module.exports =
         atom.workspace.open trace.getUrl()
 
   deactivate: ->
+    Stacktrace.off 'active-changed'
     atom.off 'stacktrace:accept-trace'
 
   serialize: ->
