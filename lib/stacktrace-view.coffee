@@ -1,4 +1,4 @@
-{View} = require 'atom'
+{View, EditorView} = require 'atom'
 {Stacktrace, PREFIX} = require './stacktrace'
 
 class StacktraceView extends View
@@ -55,9 +55,14 @@ class FrameView extends View
         @span class: 'source-location text-info inline-block pull-right', click: 'navigate', =>
           @text "#{frame.rawPath} @ #{frame.lineNumber}"
       @div class: 'panel-body padded', outlet: 'body', =>
-        @pre outlet: 'source', 'Source goes here'
+        @subview 'source', new EditorView(mini: true)
 
   initialize: (@frame) ->
+    @frame.getContext 3, (err, lines) =>
+      if err?
+        console.error err
+      else
+        @source.getEditor().setText lines.join("\n")
 
   navigate: ->
     console.log "Navigate"
