@@ -12,6 +12,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
+    "emissary": "^1.2.1",
     "jssha": "^1.5.0",
     "line-chomper": "git+https://github.com/smashwilson/line-chomper.git#optional-trim"
   }
