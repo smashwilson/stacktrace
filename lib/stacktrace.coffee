@@ -92,6 +92,10 @@ class Frame
   constructor: (@rawLine, @rawPath, @lineNumber, @functionName) ->
     @realPath = @rawPath
 
+  # Public: Return the zero-indexed line number.
+  #
+  bufferLineNumber: -> @lineNumber - 1
+
   # Public: Asynchronously collect n lines of context around the specified line number in this
   # frame's source file.
   #

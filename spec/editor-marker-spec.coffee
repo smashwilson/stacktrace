@@ -28,6 +28,7 @@ describe 'editorDecorator', ->
       atom.workspace.open(framePath fname)
 
     runs ->
+      atom.workspaceView.attachToDom()
       editorView = atom.workspaceView.getActiveView()
       editor = editorView.getEditor()
       callback()
