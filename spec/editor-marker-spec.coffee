@@ -39,9 +39,18 @@ describe 'editorDecorator', ->
       editorDecorator(editor)
       expect(editorView.find '.line.line-stackframe').toHaveLength 0
 
-  it "does nothing if the file doesn't appear in the active trace", ->
-    trace.activate()
+  describe 'with an active trace', ->
 
-    withEditorOn 'context.txt', ->
-      editorDecorator(editor)
-      expect(editorView.find '.line.line-stackframe').toHaveLength 0
+    beforeEach -> trace.activate()
+
+    it "does nothing if the file doesn't appear in the active trace", ->
+      withEditorOn 'context.txt', ->
+        editorDecorator(editor)
+        expect(editorView.find '.line.line-stackframe').toHaveLength 0
+
+    it 'decorates stackframe lines in applicable editors', ->
+      withEditorOn 'bottom.rb', ->
+        editorDecorator(editor)
+        decorated = editorView.find '.line.line-stackframe'
+        expect(decorated).toHaveLength 1
+        expect(decorated.text()).toEqual("  puts 'this is the stack line'")
