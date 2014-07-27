@@ -1,6 +1,7 @@
 EnterDialog = require './enter-dialog'
 {Stacktrace} = require './stacktrace'
 {StacktraceView} = require './stacktrace-view'
+editorDecorator = require './editor-decorator'
 
 module.exports =
 
@@ -12,6 +13,8 @@ module.exports =
       selections = atom.workspace.getActiveEditor()?.getSelections()
       text = (s.getText() for s in (selections or [])).join ''
       atom.emit 'stacktrace:accept-trace', trace: text
+
+    atom.workspace.eachEditor editorDecorator
 
     StacktraceView.registerIn(atom.workspace)
 
