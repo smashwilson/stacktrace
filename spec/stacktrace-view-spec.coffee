@@ -47,7 +47,7 @@ describe 'FrameView', ->
   [view] = []
 
   beforeEach ->
-    view = new FrameView(frames[1])
+    view = new FrameView frames[1], ->
 
   it 'shows the filename and line number', ->
     text = view.find('.source-location').text()

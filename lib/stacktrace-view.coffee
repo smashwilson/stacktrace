@@ -20,7 +20,7 @@ class StacktraceView extends View
           @span class: 'inline-block', 'to close the stacktrace navigation panel.'
       @div class: 'frames', =>
         for frame in trace.frames
-          @subview 'frame', new FrameView(frame)
+          @subview 'frame', new FrameView frame, => trace.activate()
 
   initialize: (@trace) ->
     @subscribe Stacktrace, 'active-changed', (e) =>
@@ -53,7 +53,7 @@ class StacktraceView extends View
 
 class FrameView extends View
 
-  @content: (frame) ->
+  @content: (frame, navCallback) ->
     @div class: 'frame inset-panel', =>
       @div class: 'panel-heading', =>
         @span class: 'icon icon-fold inline-block', click: 'minimize'
@@ -64,14 +64,16 @@ class FrameView extends View
       @div class: 'panel-body padded', outlet: 'body', click: 'navigate', =>
         @subview 'source', new EditorView(mini: true)
 
-  initialize: (@frame) ->
+  initialize: (@frame, @navCallback) ->
     @frame.getContext 3, (err, lines) =>
       if err?
         console.error err
       else
         @source.getEditor().setText lines.join("\n")
 
-  navigate: -> @frame.navigateTo()
+  navigate: ->
+    @navCallback()
+    @frame.navigateTo()
 
   minimize: ->
     @addClass 'minimized'
