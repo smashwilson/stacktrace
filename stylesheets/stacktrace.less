@@ -3,6 +3,10 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/stylesheets/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
+@import "syntax-variables";
+
+@stackframe-background: mix(@background-color-info, @syntax-background-color, 40%);
+@stackframe-gutter-background: mix(@background-color-info, @syntax-gutter-background-color, 40%);
 
 .stacktrace {
   &.enter-dialog .editor {
@@ -48,6 +52,10 @@
 
 .editor {
   .line.line-stackframe {
-    background: @background-color-info;
+    background: @stackframe-background;
+  }
+
+  .gutter .gutter-stackframe {
+    background: @stackframe-gutter-background;
   }
 }
