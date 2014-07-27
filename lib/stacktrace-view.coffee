@@ -55,7 +55,7 @@ class FrameView extends View
         @span class: 'source-location text-info inline-block pull-right', click: 'navigate', =>
           @text "#{frame.rawPath} @ #{frame.lineNumber}"
       @div class: 'panel-body padded', outlet: 'body', =>
-        @pre output: 'source', 'Source goes here'
+        @pre outlet: 'source', 'Source goes here'
 
   initialize: (@frame) ->
 
