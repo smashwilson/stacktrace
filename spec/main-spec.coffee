@@ -1,3 +1,5 @@
+path = require 'path'
+
 {WorkspaceView} = require 'atom'
 Stacktrace = require '../lib/main'
 
@@ -8,10 +10,10 @@ describe "Main", ->
     atom.workspaceView = new WorkspaceView
     activationPromise = atom.packages.activatePackage('stacktrace')
 
-  describe "when the stacktrace:enter event is triggered", ->
+  describe 'when the stacktrace:paste event is triggered', ->
 
     beforeEach ->
-      atom.workspaceView.trigger 'stacktrace:enter'
+      atom.workspaceView.trigger 'stacktrace:paste'
       waitsForPromise -> activationPromise
 
     it 'activates the package', ->
@@ -19,3 +21,24 @@ describe "Main", ->
 
     it 'displays the EnterDialog', ->
       expect(atom.workspaceView.find '.enter-dialog').toExist()
+
+  describe 'when the stacktrace:from-selection event is triggered', ->
+
+    beforeEach ->
+      p = path.join __dirname, 'fixtures', 'withtrace.txt'
+      editorPromise = atom.workspace.open(p)
+
+      waitsForPromise -> editorPromise
+
+      runs ->
+        editorPromise.then (editor) ->
+          editor.setSelectedBufferRange [[1, 0], [7, 0]]
+          atom.workspaceView.trigger 'stacktrace:from-selection'
+
+      waitsForPromise -> activationPromise
+
+    it 'activates the package', ->
+      expect(atom.packages.isPackageActive 'stacktrace').toBe(true)
+
+    it 'displays a StacktraceView', ->
+      expect(atom.workspaceView.find '.traceview').toExist()
