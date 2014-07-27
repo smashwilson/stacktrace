@@ -29,6 +29,9 @@ class StacktraceView extends View
       else
         @removeClass 'activated'
 
+  beforeRemove: ->
+    @unsubscribe Stacktrace
+
   # Internal: Return the window title.
   #
   getTitle: ->
