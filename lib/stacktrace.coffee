@@ -1,4 +1,6 @@
+fs = require 'fs'
 jsSHA = require 'jssha'
+{chomp} = require 'line-chomper'
 traceParser = null
 
 PREFIX = 'stacktrace://trace'
@@ -56,12 +58,25 @@ class Stacktrace
   @clearRegistry: ->
     REGISTRY = {}
 
-# Internal: A single stack frame within a {Stacktrace}.
+# Public: A single stack frame within a {Stacktrace}.
 #
 class Frame
 
   constructor: (@rawLine, @rawPath, @lineNumber, @functionName) ->
     @realPath = @rawPath
+
+  # Public: Asynchronously collect n lines of context around the specified line number in this
+  # frame's source file.
+  #
+  # n        - The number of lines of context to collect on *each* side of the error line. The error
+  #            line will always be `lines[n]` and `lines.length` will be `n * 2 + 1`.
+  # callback - Invoked with any errors or an Array containing the relevant lines.
+  #
+  getContext: (n, callback) ->
+    range =
+      fromLine: @lineNumber - n
+      toLine: @lineNumber + n + 1
+    chomp fs.createReadStream(@realPath), range, callback
 
 module.exports =
   PREFIX: PREFIX

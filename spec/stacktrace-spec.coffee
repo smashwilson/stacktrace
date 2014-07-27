@@ -1,6 +1,7 @@
+path = require 'path'
+
 {Stacktrace, Frame} = require '../lib/stacktrace'
 {RUBY: {FUNCTION: TRACE}} = require './trace-fixtures'
-require 'path'
 
 describe 'Stacktrace', ->
   describe 'with a Ruby trace', ->
@@ -84,7 +85,9 @@ describe 'Frame', ->
   it 'acquires n lines of context asynchronously', ->
     lines = null
 
-    frame.getContext 2, (ls) -> lines = ls
+    frame.getContext 2, (err, ls) ->
+      throw err if err?
+      lines = ls
 
     waitsFor -> lines?
 
