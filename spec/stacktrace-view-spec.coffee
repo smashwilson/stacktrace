@@ -37,6 +37,12 @@ describe 'StacktraceView', ->
     vs = view.find('.frame')
     expect(vs.length).toBe(3)
 
+  it 'changes its class when its trace is activated or deactivated', ->
+    Stacktrace.getActivated()?.deactivate()
+    expect(view.hasClass 'activated').toBe(false)
+    trace.activate()
+    expect(view.hasClass 'activated').toBe(true)
+
 describe 'FrameView', ->
   [view] = []
 

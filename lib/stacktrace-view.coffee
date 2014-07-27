@@ -1,10 +1,14 @@
 {View, EditorView} = require 'atom'
+{Subscriber} = require 'emissary'
+
 {Stacktrace, PREFIX} = require './stacktrace'
 
 class StacktraceView extends View
 
+  Subscriber.includeInto this
+
   @content: (trace) ->
-    tclass = if trace.isActive() then 'activated' else 'deactivated'
+    tclass = if trace.isActive() then 'activated' else ''
     @div class: "stacktrace tool-panel padded #{tclass}", =>
       @div class: 'panel padded', =>
         @h2 class: 'error-message', trace.message
@@ -19,6 +23,11 @@ class StacktraceView extends View
           @subview 'frame', new FrameView(frame)
 
   initialize: (@trace) ->
+    @subscribe Stacktrace, 'active-changed', (e) =>
+      if e.newTrace is @trace
+        @addClass 'activated'
+      else
+        @removeClass 'activated'
 
   # Internal: Return the window title.
   #

@@ -37,11 +37,11 @@
     }
   }
 
+  .deactivate-control { display: none; }
+
   &.activated {
+    .deactivate-control { display: block; }
     .activate-control { display: none; }
   }
 
-  &.deactivated {
-    .deactivate-control { display: none; }
-  }
 }
