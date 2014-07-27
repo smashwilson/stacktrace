@@ -73,9 +73,10 @@ class Frame
   # callback - Invoked with any errors or an Array containing the relevant lines.
   #
   getContext: (n, callback) ->
+    # Notice that @lineNumber is one-indexed, not zero-indexed.
     range =
-      fromLine: @lineNumber - n
-      toLine: @lineNumber + n + 1
+      fromLine: @lineNumber - n - 1
+      toLine: @lineNumber + n
       trim: false
       keepLastEmptyLine: true
     chomp fs.createReadStream(@realPath), range, callback
