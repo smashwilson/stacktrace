@@ -54,7 +54,7 @@ class FrameView extends View
         @span class: 'function-name text-highlight inline-block', frame.functionName
         @span class: 'source-location text-info inline-block pull-right', click: 'navigate', =>
           @text "#{frame.rawPath} @ #{frame.lineNumber}"
-      @div class: 'panel-body padded', outlet: 'body', =>
+      @div class: 'panel-body padded', outlet: 'body', click: 'navigate', =>
         @subview 'source', new EditorView(mini: true)
 
   initialize: (@frame) ->
