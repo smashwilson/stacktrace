@@ -14,11 +14,14 @@ frames = [
 ]
 trace = new Stacktrace(frames, 'Boom')
 
-describe 'editorMarker', ->
+describe 'editorDecorator', ->
   [editor, editorView] = []
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
+
+  afterEach ->
+    Stacktrace.getActivated()?.deactivate()
 
   withEditorOn = (fname, callback) ->
     waitsForPromise ->
@@ -33,5 +36,12 @@ describe 'editorMarker', ->
     expect(Stacktrace.getActivated()).toBeNull()
 
     withEditorOn 'bottom.rb', ->
+      editorDecorator(editor)
+      expect(editorView.find '.line.line-stackframe').toHaveLength 0
+
+  it "does nothing if the file doesn't appear in the active trace", ->
+    trace.activate()
+
+    withEditorOn 'context.txt', ->
       editorDecorator(editor)
       expect(editorView.find '.line.line-stackframe').toHaveLength 0
