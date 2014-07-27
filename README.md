@@ -21,11 +21,11 @@ like to see in place before I mark it 1.0.
 
 - [x] Accept stacktraces pasted into a dialog you call up from the command
   palette.
-- [ ] Present a view that gives you bits of context around each frame of a
-  specific stack. *(...)*
+- [x] Present a view that gives you bits of context around each frame of a
+  specific stack.
 - [x] Pluggable stacktrace recognition and parsing code.
 - [ ] Map parsed frames to source files on the local filesystem.
-- [ ] While a stacktrace is active, highlight individual lines from the trace
+- [x] While a stacktrace is active, highlight individual lines from the trace
   in open editors.
 - [ ] Provide commands for next-frame, previous-frame, and turning it off.
 - [ ] Show a stacktrace navigation view as a bottom panel with next, previous
