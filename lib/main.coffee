@@ -8,6 +8,11 @@ module.exports =
     atom.workspaceView.command 'stacktrace:paste', ->
       atom.workspaceView.appendToTop new EnterDialog()
 
+    atom.workspaceView.command 'stacktrace:from-selection', ->
+      selections = atom.workspace.getActiveEditor()?.getSelections()
+      text = (s.getText() for s in (selections or [])).join ''
+      atom.emit 'stacktrace:accept-trace', trace: text
+
     StacktraceView.registerIn(atom.workspace)
 
     atom.on 'stacktrace:accept-trace', ({trace}) =>

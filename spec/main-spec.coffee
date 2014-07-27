@@ -25,15 +25,15 @@ describe "Main", ->
   describe 'when the stacktrace:from-selection event is triggered', ->
 
     beforeEach ->
-      path = path.join __dirname, 'fixtures', 'withtrace.txt'
-      editorPromise = atom.workspace.open(path)
+      p = path.join __dirname, 'fixtures', 'withtrace.txt'
+      editorPromise = atom.workspace.open(p)
 
       waitsForPromise -> editorPromise
 
       runs ->
         editorPromise.then (editor) ->
           editor.setSelectedBufferRange [[1, 0], [7, 0]]
-        atom.workspaceView.trigger 'stacktrace:from-selection'
+          atom.workspaceView.trigger 'stacktrace:from-selection'
 
       waitsForPromise -> activationPromise
 
