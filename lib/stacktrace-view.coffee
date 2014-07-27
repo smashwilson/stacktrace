@@ -9,7 +9,7 @@ class StacktraceView extends View
 
   @content: (trace) ->
     tclass = if trace.isActive() then 'activated' else ''
-    @div class: "stacktrace tool-panel padded #{tclass}", =>
+    @div class: "stacktrace traceview tool-panel padded #{tclass}", =>
       @div class: 'panel padded', =>
         @h2 class: 'error-message', trace.message
         @p class: 'activate-control', =>
