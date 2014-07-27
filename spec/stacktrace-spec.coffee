@@ -26,7 +26,7 @@ describe 'Stacktrace', ->
         expect(trace.message).toBe('whoops (RuntimeError)')
 
       it 'parses file paths from each frame', ->
-        filePaths = (frame.path for frame in trace.frames)
+        filePaths = (frame.realPath for frame in trace.frames)
         expected = [
           '/home/smash/samples/tracer/otherdir/file2.rb'
           '/home/smash/samples/tracer/dir/file1.rb'
