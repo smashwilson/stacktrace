@@ -12,6 +12,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "jssha": "^1.5.0"
+    "jssha": "^1.5.0",
+    "line-chomper": "^0.4.4"
   }
 }
