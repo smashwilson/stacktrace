@@ -2,7 +2,7 @@
 {Stacktrace, Frame} = require '../lib/stacktrace'
 
 frames = [
-  new Frame('raw0', 'bottom.rb', 12, 'botfunc', 'Boom')
+  new Frame('raw0', 'bottom.rb', 12, 'botfunc')
   new Frame('raw1', 'middle.rb', 42, 'midfunc')
   new Frame('raw2', 'top.rb', 37, 'topfunc')
 ]
@@ -29,15 +29,31 @@ describe 'StacktraceView', ->
     trace.register()
     expect(opener(trace.getUrl()).trace).toBe(trace)
 
-  it 'shows the error message'
-  it 'renders a subview for each frame'
+  it 'shows the error message', ->
+    text = view.find('.error-message').text()
+    expect(text).toEqual('Boom')
+
+  it 'renders a subview for each frame', ->
+    vs = view.find('.frame')
+    expect(vs.length).toBe(3)
+
+  it 'changes its class when its trace is activated or deactivated', ->
+    Stacktrace.getActivated()?.deactivate()
+    expect(view.hasClass 'activated').toBe(false)
+    trace.activate()
+    expect(view.hasClass 'activated').toBe(true)
 
 describe 'FrameView', ->
   [view] = []
 
   beforeEach ->
-    view = new FrameView(frames[1])
+    view = new FrameView frames[1], ->
 
-  it 'shows the filename'
-  it 'shows the line number'
-  it 'shows the function name'
+  it 'shows the filename and line number', ->
+    text = view.find('.source-location').text()
+    expect(text).toMatch(/middle\.rb/)
+    expect(text).toMatch(/42/)
+
+  it 'shows the function name', ->
+    text = view.find('.function-name').text()
+    expect(text).toEqual('midfunc')

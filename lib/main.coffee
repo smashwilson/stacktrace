@@ -11,9 +11,9 @@ module.exports =
     StacktraceView.registerIn(atom.workspace)
 
     atom.on 'stacktrace:accept-trace', ({trace}) =>
-      t = Stacktrace.parse(trace)
-      t.register()
-      atom.workspace.open t.getUrl()
+      for trace in Stacktrace.parse(trace)
+        trace.register()
+        atom.workspace.open trace.getUrl()
 
   deactivate: ->
     atom.off 'stacktrace:accept-trace'

@@ -1,13 +1,22 @@
+fs = require 'fs'
+
+{Emitter} = require 'emissary'
+
 jsSHA = require 'jssha'
+{chomp} = require 'line-chomper'
 traceParser = null
 
 PREFIX = 'stacktrace://trace'
 
 REGISTRY = {}
+ACTIVE = null
 
 # Internal: A heuristically parsed and interpreted stacktrace.
 #
 class Stacktrace
+
+  # Turn the Stacktrace class into an emitter.
+  Emitter.extend this
 
   constructor: (@frames = [], @message = '') ->
 
@@ -23,6 +32,11 @@ class Stacktrace
   #
   getUrl: -> @url ?= "#{PREFIX}/#{@getChecksum()}"
 
+  # Public: Determine whether or not this Stacktrace is the "active" one. The active Stacktrace is
+  # shown in a bottom navigation panel and highlighted in opened editors.
+  #
+  isActive: -> false
+
   # Internal: Register this trace in a global map by its URL.
   #
   register: ->
@@ -33,6 +47,22 @@ class Stacktrace
   #
   unregister: ->
     delete REGISTRY[@getUrl()]
+
+  # Public: Mark this trace as the "active" one. The active trace is shown in the navigation view
+  # and its frames are given a marker in an open {EditorView}.
+  #
+  activate: ->
+    former = ACTIVE
+    ACTIVE = this
+    if former isnt ACTIVE
+      Stacktrace.emit 'active-changed', oldTrace: former, newTrace: ACTIVE
+
+  # Public: Deactivate this trace if it's active.
+  #
+  deactivate: ->
+    if ACTIVE is this
+      ACTIVE = null
+      Stacktrace.emit 'active-changed', oldTrace: this, newTrace: null
 
   # Public: Parse zero to many Stacktrace instances from a corpus of text.
   #
@@ -51,11 +81,43 @@ class Stacktrace
   @clearRegistry: ->
     REGISTRY = {}
 
-# Internal: A single stack frame within a {Stacktrace}.
+  # Public: Retrieve the currently activated {Stacktrace}, or null if no trace is active.
+  #
+  @getActivated: -> ACTIVE
+
+# Public: A single stack frame within a {Stacktrace}.
 #
 class Frame
 
-  constructor: (@rawLine, @path, @lineNumber, @functionName) ->
+  constructor: (@rawLine, @rawPath, @lineNumber, @functionName) ->
+    @realPath = @rawPath
+
+  # Public: Asynchronously collect n lines of context around the specified line number in this
+  # frame's source file.
+  #
+  # n        - The number of lines of context to collect on *each* side of the error line. The error
+  #            line will always be `lines[n]` and `lines.length` will be `n * 2 + 1`.
+  # callback - Invoked with any errors or an Array containing the relevant lines.
+  #
+  getContext: (n, callback) ->
+    # Notice that @lineNumber is one-indexed, not zero-indexed.
+    range =
+      fromLine: @lineNumber - n - 1
+      toLine: @lineNumber + n
+      trim: false
+      keepLastEmptyLine: true
+    chomp fs.createReadStream(@realPath), range, callback
+
+  navigateTo: ->
+    position = [@lineNumber - 1, 0]
+    promise = atom.workspace.open @realPath, initialLine: position[0]
+    promise.then (editor) ->
+      editor.setCursorBufferPosition position
+      for ev in atom.workspaceView.getEditorViews()
+        editorView = ev if ev.getEditor() is editor
+      if editorView?
+        editorView.scrollToBufferPosition position, center: true
+
 
 module.exports =
   PREFIX: PREFIX

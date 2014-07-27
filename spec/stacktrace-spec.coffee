@@ -1,4 +1,6 @@
-{Stacktrace} = require '../lib/stacktrace'
+path = require 'path'
+
+{Stacktrace, Frame} = require '../lib/stacktrace'
 {RUBY: {FUNCTION: TRACE}} = require './trace-fixtures'
 
 describe 'Stacktrace', ->
@@ -26,7 +28,7 @@ describe 'Stacktrace', ->
         expect(trace.message).toBe('whoops (RuntimeError)')
 
       it 'parses file paths from each frame', ->
-        filePaths = (frame.path for frame in trace.frames)
+        filePaths = (frame.realPath for frame in trace.frames)
         expected = [
           '/home/smash/samples/tracer/otherdir/file2.rb'
           '/home/smash/samples/tracer/dir/file1.rb'
@@ -72,3 +74,54 @@ describe 'Stacktrace', ->
         expect(Stacktrace.forUrl(trace.getUrl())).toBe(trace)
         trace.unregister()
         expect(Stacktrace.forUrl(trace.getUrl())).toBeUndefined()
+
+    describe 'activation', ->
+      afterEach ->
+        activated = Stacktrace.getActivated()
+        activated.deactivate() if activated?
+        Stacktrace.off 'active-changed'
+
+      it 'can be activated', ->
+        trace.activate()
+        expect(Stacktrace.getActivated()).toBe(trace)
+
+      it 'can be deactivated if activated', ->
+        trace.activate()
+        trace.deactivate()
+        expect(Stacktrace.getActivated()).toBeNull()
+
+      it 'can be deactivated even if not activated', ->
+        trace.deactivate()
+        expect(Stacktrace.getActivated()).toBeNull()
+
+      it 'broadcasts a "active-changed" event', ->
+        event = null
+        Stacktrace.on 'active-changed', (e) -> event = e
+
+        trace.activate()
+        expect(event.oldTrace).toBeNull()
+        expect(event.newTrace).toBe(trace)
+
+describe 'Frame', ->
+  [frame] = []
+
+  beforeEach ->
+    fixturePath = path.join __dirname, 'fixtures', 'context.txt'
+    frame = new Frame('five', fixturePath, 5, 'something')
+
+  it 'acquires n lines of context asynchronously', ->
+    lines = null
+
+    frame.getContext 2, (err, ls) ->
+      throw err if err?
+      lines = ls
+
+    waitsFor -> lines?
+
+    runs ->
+      expect(lines.length).toBe(5)
+      expect(lines[0]).toEqual('three')
+      expect(lines[1]).toEqual('  four')
+      expect(lines[2]).toEqual('five')
+      expect(lines[3]).toEqual('six')
+      expect(lines[4]).toEqual('')
