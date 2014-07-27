@@ -94,7 +94,7 @@ describe 'Frame', ->
     runs ->
       expect(lines.length).toBe(5)
       expect(lines[0]).toEqual('three')
-      expect(lines[1]).toEqual('four')
+      expect(lines[1]).toEqual('  four')
       expect(lines[2]).toEqual('five')
       expect(lines[3]).toEqual('six')
-      expect(lines[4]).toEqual('seven')
+      expect(lines[4]).toEqual('')

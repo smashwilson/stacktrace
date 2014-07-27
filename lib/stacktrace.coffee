@@ -76,6 +76,8 @@ class Frame
     range =
       fromLine: @lineNumber - n
       toLine: @lineNumber + n + 1
+      trim: false
+      keepLastEmptyLine: true
     chomp fs.createReadStream(@realPath), range, callback
 
 module.exports =
