@@ -10,5 +10,4 @@ module.exports = (editor) ->
     if frame.realPath is editor.getPath()
       range = editor.getBuffer().rangeForRow frame.bufferLineNumber()
       marker = editor.markBufferRange range
-      console.log "Decorating #{editor.getPath()} range #{range}"
       editor.decorateMarker marker, type: 'line', class: 'line-stackframe'
