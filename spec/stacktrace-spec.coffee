@@ -75,6 +75,24 @@ describe 'Stacktrace', ->
         trace.unregister()
         expect(Stacktrace.forUrl(trace.getUrl())).toBeUndefined()
 
+    describe 'activation', ->
+      afterEach ->
+        activated = Stacktrace.getActivated()
+        activated.deactivate() if activated?
+
+      it 'can be activated', ->
+        trace.activate()
+        expect(Stacktrace.getActivated()).toBe(trace)
+
+      it 'can be deactivated if activated', ->
+        trace.activate()
+        trace.deactivate()
+        expect(Stacktrace.getActivated()).toBeNull()
+
+      it 'can be deactivated even if not activated', ->
+        trace.deactivate()
+        expect(Stacktrace.getActivated()).toBeNull()
+
 describe 'Frame', ->
   [frame] = []
 

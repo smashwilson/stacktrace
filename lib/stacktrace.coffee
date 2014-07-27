@@ -6,6 +6,7 @@ traceParser = null
 PREFIX = 'stacktrace://trace'
 
 REGISTRY = {}
+ACTIVE = null
 
 # Internal: A heuristically parsed and interpreted stacktrace.
 #
@@ -41,6 +42,15 @@ class Stacktrace
   unregister: ->
     delete REGISTRY[@getUrl()]
 
+  # Public: Mark this trace as the "active" one. The active trace is shown in the navigation view
+  # and its frames are given a marker in an open {EditorView}.
+  #
+  activate: -> ACTIVE = this
+
+  # Public: Deactivate this trace if it's active.
+  #
+  deactivate: -> ACTIVE = null if ACTIVE is this
+
   # Public: Parse zero to many Stacktrace instances from a corpus of text.
   #
   # text - A raw blob of text.
@@ -57,6 +67,10 @@ class Stacktrace
   # Internal: Clear the global trace registry.
   @clearRegistry: ->
     REGISTRY = {}
+
+  # Public: Retrieve the currently activated {Stacktrace}, or null if no trace is active.
+  #
+  @getActivated: -> ACTIVE
 
 # Public: A single stack frame within a {Stacktrace}.
 #
