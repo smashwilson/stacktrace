@@ -1,4 +1,7 @@
 fs = require 'fs'
+
+{Emitter} = require 'emissary'
+
 jsSHA = require 'jssha'
 {chomp} = require 'line-chomper'
 traceParser = null
@@ -11,6 +14,9 @@ ACTIVE = null
 # Internal: A heuristically parsed and interpreted stacktrace.
 #
 class Stacktrace
+
+  # Turn the Stacktrace class into an emitter.
+  Emitter.extend this
 
   constructor: (@frames = [], @message = '') ->
 
@@ -45,11 +51,18 @@ class Stacktrace
   # Public: Mark this trace as the "active" one. The active trace is shown in the navigation view
   # and its frames are given a marker in an open {EditorView}.
   #
-  activate: -> ACTIVE = this
+  activate: ->
+    former = ACTIVE
+    ACTIVE = this
+    if former isnt ACTIVE
+      Stacktrace.emit 'active-changed', oldTrace: former, newTrace: ACTIVE
 
   # Public: Deactivate this trace if it's active.
   #
-  deactivate: -> ACTIVE = null if ACTIVE is this
+  deactivate: ->
+    if ACTIVE is this
+      ACTIVE = null
+      Stacktrace.emit 'active-changed', oldTrace: this, newTrace: null
 
   # Public: Parse zero to many Stacktrace instances from a corpus of text.
   #
