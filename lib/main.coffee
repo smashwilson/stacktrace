@@ -15,6 +15,8 @@ module.exports =
       atom.emit 'stacktrace:accept-trace', trace: text
 
     atom.workspace.eachEditor editorDecorator
+    Stacktrace.on 'active-changed', ->
+      editorDecorator(e) for e in atom.workspace.getEditors()
 
     StacktraceView.registerIn(atom.workspace)
 
@@ -24,6 +26,7 @@ module.exports =
         atom.workspace.open trace.getUrl()
 
   deactivate: ->
+    Stacktrace.off 'active-changed'
     atom.off 'stacktrace:accept-trace'
 
   serialize: ->

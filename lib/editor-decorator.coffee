@@ -2,7 +2,12 @@
 
 {Stacktrace} = require './stacktrace'
 
+markers = []
+
 module.exports = (editor) ->
+  m.destroy() for m in markers
+  markers = []
+
   active = Stacktrace.getActivated()
   return unless active?
 
@@ -12,3 +17,4 @@ module.exports = (editor) ->
       marker = editor.markBufferRange range
       editor.decorateMarker marker, type: 'line', class: 'line-stackframe'
       editor.decorateMarker marker, type: 'gutter', class: 'gutter-stackframe'
+      markers.push marker

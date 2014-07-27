@@ -55,3 +55,10 @@ describe 'editorDecorator', ->
         decorated = editorView.find '.line.line-stackframe'
         expect(decorated).toHaveLength 1
         expect(decorated.text()).toEqual("  puts 'this is the stack line'")
+
+    it 'removes prior decorations when deactivated', ->
+      withEditorOn 'bottom.rb', ->
+        editorDecorator(editor)
+        trace.deactivate()
+        editorDecorator(editor)
+        expect(editorView.find '.line.line-stackframe').toHaveLength 0
