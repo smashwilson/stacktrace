@@ -8,10 +8,10 @@ describe "Main", ->
     atom.workspaceView = new WorkspaceView
     activationPromise = atom.packages.activatePackage('stacktrace')
 
-  describe "when the stacktrace:enter event is triggered", ->
+  describe 'when the stacktrace:paste event is triggered', ->
 
     beforeEach ->
-      atom.workspaceView.trigger 'stacktrace:enter'
+      atom.workspaceView.trigger 'stacktrace:paste'
       waitsForPromise -> activationPromise
 
     it 'activates the package', ->
