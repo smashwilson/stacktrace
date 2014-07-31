@@ -22,6 +22,10 @@ describe 'NavigationView', ->
 
       it 'navigates to the previous frame'
 
+    describe 'on an editor with multiple frames', ->
+
+      it 'notices if you manually navigate to a different frame'
+
     describe 'on an editor not corresponding to a frame', ->
 
       it 'navigates back to the last active frame'
