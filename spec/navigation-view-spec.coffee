@@ -4,7 +4,17 @@
 
 describe 'NavigationView', ->
 
-  it 'attaches itself to the workspace'
+  beforeEach ->
+    atom.workspaceView = new WorkspaceView
+    atom.workspaceView.attachToDom()
+    activationPromise = atom.packages.activatePackage('stacktrace')
+
+    atom.workspaceView.trigger 'stacktrace:paste'
+
+    waitsForPromise -> activationPromise
+
+  it 'attaches itself to the workspace', ->
+    expect(atom.workspaceView.find '.stacktrace.navigation').toHaveLength 1
 
   describe 'with an active stacktrace', ->
 
