@@ -1,4 +1,5 @@
 {View} = require 'atom'
+{Stacktrace} = require './stacktrace'
 
 class NavigationView extends View
 
