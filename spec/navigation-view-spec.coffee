@@ -31,14 +31,12 @@ describe 'NavigationView', ->
     expect(view).not.toBeNull()
 
   describe 'with an active stacktrace', ->
-    [view] = []
 
     beforeEach ->
       trace.activate()
-      view = atom.workspaceView.find('.stacktrace.navigation').view()
 
     it 'should be visible', ->
-      expect(view.hasClass 'active').toBeTruthy()
+      expect(view.hasClass 'inactive').toBeFalsy()
 
     it 'shows the active trace name', ->
       text = view.find('.message').text()
