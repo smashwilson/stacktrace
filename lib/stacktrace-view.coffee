@@ -23,6 +23,7 @@ class StacktraceView extends View
           @subview 'frame', new FrameView frame, => trace.activate()
 
   initialize: (@trace) ->
+    @uri = @trace.getUrl()
     @subscribe Stacktrace, 'active-changed', (e) =>
       if e.newTrace is @trace
         @addClass 'activated'

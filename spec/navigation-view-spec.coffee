@@ -43,8 +43,12 @@ describe 'NavigationView', ->
       expect(text).toEqual('Boom')
 
     it 'navigates back to the trace on a click', ->
-      view.backToTrace()
-      expect(atom.workspaceView.getActiveView().hasClass '.stacktrace.traceview').toBeTruthy()
+      promise = view.backToTrace()
+
+      waitsForPromise -> promise
+
+      runs ->
+        expect(atom.workspaceView.getActiveView().hasClass '.stacktrace.traceview').toBeTruthy()
 
     it 'deactivates the trace', ->
       view.deactivateTrace()
