@@ -26,6 +26,7 @@ describe 'NavigationView', ->
 
   afterEach ->
     Stacktrace.getActivated()?.deactivate()
+    Stacktrace.clearRegistry()
 
   it 'attaches itself to the workspace', ->
     expect(view).not.toBeNull()
@@ -33,6 +34,7 @@ describe 'NavigationView', ->
   describe 'with an active stacktrace', ->
 
     beforeEach ->
+      trace.register()
       trace.activate()
 
     it 'should be visible', ->
@@ -43,12 +45,10 @@ describe 'NavigationView', ->
       expect(text).toEqual('Boom')
 
     it 'navigates back to the trace on a click', ->
-      promise = view.backToTrace()
-
-      waitsForPromise -> promise
+      waitsForPromise -> view.backToTrace()
 
       runs ->
-        expect(atom.workspaceView.getActiveView().hasClass '.stacktrace.traceview').toBeTruthy()
+        expect(atom.workspaceView.getActiveView().hasClass 'traceview').toBeTruthy()
 
     it 'deactivates the trace', ->
       view.deactivateTrace()
