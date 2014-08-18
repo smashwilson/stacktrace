@@ -11,6 +11,7 @@
 .stacktrace {
   &.enter-dialog .editor {
     height: 300px;
+    max-height: 300px;
   }
 
   .frame .panel-heading {
@@ -37,7 +38,11 @@
     }
 
     .editor {
-      cursor: pointer;
+      .editor-contents {
+        cursor: pointer;
+      }
+      height: 175px;
+      max-height: 175px;
     }
   }
 
