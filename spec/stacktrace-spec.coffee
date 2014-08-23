@@ -1,3 +1,4 @@
+{Point} = require 'atom'
 path = require 'path'
 
 {Stacktrace, Frame} = require '../lib/stacktrace'
@@ -102,8 +103,26 @@ describe 'Stacktrace', ->
         expect(event.oldTrace).toBeNull()
         expect(event.newTrace).toBe(trace)
 
+    describe 'active frame location', ->
+
+      it 'locates the frame corresponding to an Editor position', ->
+        {frame, index, total} = trace.atPosition
+          position: Point.fromObject([4, 0])
+          path: '/home/smash/samples/tracer/otherdir/file2.rb'
+
+        expect(frame).toBe(trace.frames[2])
+        expect(index).toBe(3)
+        expect(total).toBe(5)
+
+      it 'returns null if none are found', ->
+        result = trace.atPosition
+          position: Point.fromObject([2, 1])
+          path: '/home/smash/samples/tracer/otherdir/file2.rb'
+
+        expect(result).toBeNull()
+
 describe 'Frame', ->
-  [frame] = []
+  [frame, fixturePath] = []
 
   beforeEach ->
     fixturePath = path.join __dirname, 'fixtures', 'context.txt'
@@ -125,3 +144,13 @@ describe 'Frame', ->
       expect(lines[2]).toEqual('five')
       expect(lines[3]).toEqual('six')
       expect(lines[4]).toEqual('')
+
+  describe 'recognizes itself in an Editor', ->
+    it 'is on a cursor', ->
+      expect(frame.isOn(position: Point.fromObject([4, 0]), path: fixturePath)).toBeTruthy()
+
+    it 'is not on a cursor', ->
+      expect(frame.isOn(position: Point.fromObject([2, 0]), path: fixturePath)).toBeFalsy()
+
+    it 'is on a different file', ->
+      expect(frame.isOn(position: Point.fromObject([4, 0]), path: 'some/other/path.rb')).toBeFalsy()
