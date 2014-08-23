@@ -17,6 +17,7 @@ class NavigationView extends View
   initialize: ->
     @subscribe Stacktrace, 'active-changed', (e) =>
       if e.newTrace? then @useTrace(e.newTrace) else @noTrace()
+    if Stacktrace.getActivated? then @hide()
 
   beforeRemove: ->
     @unsubscribe Stacktrace
