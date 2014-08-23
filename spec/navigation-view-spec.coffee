@@ -55,8 +55,18 @@ describe 'NavigationView', ->
       expect(trace.isActive()).toBeFalsy()
 
     describe 'on an editor corresponding to a single frame', ->
+      [editor] = []
 
-      it 'shows the frame index'
+      beforeEach ->
+        waitsForPromise -> trace.frames[1].navigateTo()
+
+        runs ->
+          editor = atom.workspace.getActiveEditor()
+
+      it 'shows the current frame and its index', ->
+        expect(view.find('.current-frame.function').text()).toBe('midfunc')
+        expect(view.find('.current-frame.index').text()).toBe('2')
+        expect(view.find('.current-frame.total').text()).toBe('3')
 
       it 'navigates to the next frame'
 
