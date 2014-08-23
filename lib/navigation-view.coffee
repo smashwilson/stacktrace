@@ -10,7 +10,9 @@ class NavigationView extends View
     activatedClass = if Stacktrace.getActivated()? then '' else 'inactive'
 
     @div class: "tool-panel panel-bottom padded stacktrace navigation #{activatedClass}", =>
-      @h2 class: 'text-highlight message', outlet: 'message', click: 'backToTrace'
+      @div class: 'trace-name', =>
+        @h2 class: 'inline-block text-highlight message', outlet: 'message', click: 'backToTrace'
+        @span class: 'inline-block icon icon-x', click: 'deactivateTrace'
 
   initialize: ->
     @subscribe Stacktrace, 'active-changed', (e) =>
@@ -22,10 +24,15 @@ class NavigationView extends View
   useTrace: (trace) ->
     @removeClass 'inactive'
     @message.text(trace.message)
+    @show()
+
+  deactivateTrace: ->
+    Stacktrace.getActivated().deactivate()
 
   noTrace: ->
     @addClass 'inactive'
     @message.text('')
+    @hide()
 
   backToTrace: ->
     url = Stacktrace.getActivated()?.getUrl()
