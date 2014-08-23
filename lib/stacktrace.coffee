@@ -87,10 +87,12 @@ class Stacktrace
 
   # Internal: Return a registered trace, or null if none match the provided
   # URL.
+  #
   @forUrl: (url) ->
     REGISTRY[url]
 
   # Internal: Clear the global trace registry.
+  #
   @clearRegistry: ->
     REGISTRY = {}
 
