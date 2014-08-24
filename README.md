@@ -28,5 +28,5 @@ like to see in place before I mark it 1.0.
 - [x] While a stacktrace is active, highlight individual lines from the trace
   in open editors.
 - [ ] Provide commands for next-frame, previous-frame, and turning it off.
-- [ ] Show a stacktrace navigation view as a bottom panel with next, previous
+- [x] Show a stacktrace navigation view as a bottom panel with next, previous
   and stop buttons.
