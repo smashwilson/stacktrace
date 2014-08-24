@@ -83,4 +83,14 @@ class NavigationView extends View
     url = Stacktrace.getActivated()?.getUrl()
     atom.workspace.open(url) if url
 
+  navigateToCaller: ->
+    return unless @trace? and @frame?
+
+    @trace.callerOf(@frame)?.navigateTo()
+
+  navigateToCalled: ->
+    return unless @trace? and @frame?
+
+    @trace.calledFrom(@frame)?.navigateTo()
+
 module.exports = NavigationView: NavigationView

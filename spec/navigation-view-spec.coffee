@@ -73,9 +73,17 @@ describe 'NavigationView', ->
         expect(view.find('.current-frame .index').text()).toBe('2')
         expect(view.find('.current-frame .total').text()).toBe('3')
 
-      it 'navigates to the next frame'
+      it "navigates to the caller's frame", ->
+        waitsForPromise -> view.navigateToCaller()
 
-      it 'navigates to the previous frame'
+        runs ->
+          expect(view.frame).toBe(trace.frames[2])
+
+      it 'navigates to the called frame', ->
+        waitsForPromise -> view.navigateToCalled()
+
+        runs ->
+          expect(view.frame).toBe(trace.frames[0])
 
     describe 'on an editor with multiple frames', ->
 
