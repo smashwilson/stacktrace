@@ -106,9 +106,9 @@ describe 'NavigationView', ->
           editor = atom.workspace.getActiveEditor()
 
       it 'notices if you manually navigate to a different frame', ->
-        expect(view.find('.current-frame.function').text()).toEqual 'midfunc'
+        expect(view.find('.current-frame .function').text()).toEqual 'midfunc'
 
         editor.setCursorBufferPosition [4, 1]
 
         expect(view.frame).toBe(trace.frames[3])
-        expect(view.find('.current-frame.function').text()).toEqual 'otherfunc'
+        expect(view.find('.current-frame .function').text()).toEqual 'otherfunc'

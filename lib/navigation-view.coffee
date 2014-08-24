@@ -15,7 +15,7 @@ class NavigationView extends View
         @span class: 'inline-block icon icon-x', click: 'deactivateTrace'
       @div class: 'inline-block current-frame unfocused', outlet: 'frameContainer', =>
         @span class: 'inline-block icon icon-code'
-        @span class: 'inline-block function', outlet: 'frameFunction'
+        @span class: 'inline-block function', outlet: 'frameFunction', click: 'navigateToLastActive'
         @span class: 'inline-block index', outlet: 'frameIndex'
         @span class: 'inline-block divider', '/'
         @span class: 'inline-block total', outlet: 'frameTotal'
