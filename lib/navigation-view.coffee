@@ -19,6 +19,13 @@ class NavigationView extends View
         @span class: 'inline-block index', outlet: 'frameIndex'
         @span class: 'inline-block divider', '/'
         @span class: 'inline-block total', outlet: 'frameTotal'
+      @div class: 'pull-right controls', =>
+        @button class: 'inline-block btn', click: 'navigateToCaller', =>
+          @span class: 'icon icon-arrow-up'
+          @text 'Caller'
+        @button class: 'inline-block btn', click: 'navigateToCalled', =>
+          @span class: 'icon icon-arrow-down'
+          @text 'Follow Call'
 
   initialize: ->
     @subscribe Stacktrace, 'active-changed', (e) =>
@@ -36,8 +43,9 @@ class NavigationView extends View
           # Allow the already-set @frame a chance to see if it still applies.
           # This lets the caller and called navigation work properly, even if multiple frames are
           # on the same line.
-          unless @frame? and @frame.isOn(pos)
-
+          if @frame? and @frame.isOn(pos)
+            @useFrame(@frame)
+          else
             # Otherwise, scan the trace for a matching frame.
             frame = @trace.atEditorPosition(pos)
             if frame? then @useFrame(frame) else @unfocusFrame()
@@ -86,11 +94,17 @@ class NavigationView extends View
   navigateToCaller: ->
     return unless @trace? and @frame?
 
-    @trace.callerOf(@frame)?.navigateTo()
+    f = @trace.callerOf(@frame)
+    if f?
+      @frame = f
+      @frame.navigateTo()
 
   navigateToCalled: ->
     return unless @trace? and @frame?
 
-    @trace.calledFrom(@frame)?.navigateTo()
+    f = @trace.calledFrom(@frame)
+    if f?
+      @frame = f
+      @frame.navigateTo()
 
 module.exports = NavigationView: NavigationView
