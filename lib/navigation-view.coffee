@@ -29,10 +29,18 @@ class NavigationView extends View
     atom.workspace.eachEditor (e) =>
       @subscribe e, 'cursors-moved', =>
         if @trace?
-          frame = @trace.atPosition
+          pos =
             position: e.getCursorBufferPosition()
             path: e.getPath()
-          if frame? then @useFrame(frame) else @unfocusFrame()
+
+          # Allow the already-set @frame a chance to see if it still applies.
+          # This lets the caller and called navigation work properly, even if multiple frames are
+          # on the same line.
+          unless @frame? and @frame.isOn(pos)
+
+            # Otherwise, scan the trace for a matching frame.
+            result = @trace.atPosition(pos)
+            if result? then @useFrame(result) else @unfocusFrame()
 
     if Stacktrace.getActivated? then @hide()
 
