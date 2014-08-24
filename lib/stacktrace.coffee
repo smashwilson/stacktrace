@@ -81,6 +81,19 @@ class Stacktrace
       index += 1
     return null
 
+  # Public: Return the Frame that called the given Frame, or undefined if given the top of the stack.
+  #
+  # frame - The current Frame to use as a reference point.
+  #
+  callerOf: (frame) -> @frames[frame.index + 1]
+
+  # Public: Return the Frame that a given Frame called into, or undefined if given the bottom of the
+  # stack.
+  #
+  # frame - The current Frame to use as a reference point.
+  #
+  calledFrom: (frame) -> @frames[frame.index - 1]
+
   # Public: Parse zero to many Stacktrace instances from a corpus of text.
   #
   # text - A raw blob of text.

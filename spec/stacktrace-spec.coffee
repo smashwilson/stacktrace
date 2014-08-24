@@ -107,6 +107,30 @@ describe 'Stacktrace', ->
         expect(event.oldTrace).toBeNull()
         expect(event.newTrace).toBe(trace)
 
+    describe 'walking up and down the stack', ->
+
+      it 'links to the callee of each frame', ->
+        callees = (trace.calledFrom(f) for f in trace.frames)
+        expected = [
+          undefined
+          trace.frames[0]
+          trace.frames[1]
+          trace.frames[2]
+          trace.frames[3]
+        ]
+        expect(callees).toEqual(expected)
+
+      it 'links to the caller of each frame', ->
+        callers = (trace.callerOf(f) for f in trace.frames)
+        expected = [
+          trace.frames[1]
+          trace.frames[2]
+          trace.frames[3]
+          trace.frames[4]
+          undefined
+        ]
+        expect(callers).toEqual(expected)
+
     describe 'active frame location', ->
 
       it 'locates the frame corresponding to an Editor position', ->
