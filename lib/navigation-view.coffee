@@ -39,8 +39,8 @@ class NavigationView extends View
           unless @frame? and @frame.isOn(pos)
 
             # Otherwise, scan the trace for a matching frame.
-            result = @trace.atPosition(pos)
-            if result? then @useFrame(result) else @unfocusFrame()
+            frame = @trace.atEditorPosition(pos)
+            if frame? then @useFrame(frame) else @unfocusFrame()
 
     if Stacktrace.getActivated? then @hide()
 
@@ -59,12 +59,12 @@ class NavigationView extends View
     @noFrame()
     @hide()
 
-  useFrame: ({@frame, index, total}) ->
+  useFrame: (@frame) ->
     @frameContainer.removeClass 'unfocused'
     @frameFunction.text @frame.functionName
     @frameFunction.addClass 'highlight-info'
-    @frameIndex.text index.toString()
-    @frameTotal.text total.toString()
+    @frameIndex.text @frame.humanIndex().toString()
+    @frameTotal.text @trace.frames.length.toString()
 
   unfocusFrame: ->
     @frameContainer.addClass 'unfocused'

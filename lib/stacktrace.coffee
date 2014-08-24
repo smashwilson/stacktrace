@@ -74,10 +74,10 @@ class Stacktrace
   # object - "position" should be a Point corresponding to a cursor position, and "path" the full
   #          path of an Editor.
   #
-  atPosition: (editorPosition) ->
+  atEditorPosition: (editorPosition) ->
     [index, total] = [1, @frames.length]
     for frame in @frames
-      return {frame, index, total} if frame.isOn editorPosition
+      return frame if frame.isOn editorPosition
       index += 1
     return null
 

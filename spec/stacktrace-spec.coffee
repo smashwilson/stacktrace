@@ -134,20 +134,19 @@ describe 'Stacktrace', ->
     describe 'active frame location', ->
 
       it 'locates the frame corresponding to an Editor position', ->
-        {frame, index, total} = trace.atPosition
+        frame = trace.atEditorPosition
           position: Point.fromObject([4, 0])
           path: '/home/smash/samples/tracer/otherdir/file2.rb'
 
         expect(frame).toBe(trace.frames[2])
-        expect(index).toBe(3)
-        expect(total).toBe(5)
+        expect(frame.humanIndex()).toBe(3)
 
       it 'returns null if none are found', ->
-        result = trace.atPosition
+        frame = trace.atEditorPosition
           position: Point.fromObject([2, 1])
           path: '/home/smash/samples/tracer/otherdir/file2.rb'
 
-        expect(result).toBeNull()
+        expect(frame).toBeNull()
 
 describe 'Frame', ->
   [frame, fixturePath] = []
