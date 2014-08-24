@@ -19,6 +19,10 @@ class Stacktrace
   Emitter.extend this
 
   constructor: (@frames = [], @message = '') ->
+    i = 0
+    for f in @frames
+      f.index = i
+      i += 1
 
   # Internal: Compute the SHA256 checksum of the normalized stacktrace.
   #
@@ -105,11 +109,16 @@ class Stacktrace
 class Frame
 
   constructor: (@rawLine, @rawPath, @lineNumber, @functionName) ->
+    @index = null
     @realPath = @rawPath
 
   # Public: Return the zero-indexed line number.
   #
   bufferLineNumber: -> @lineNumber - 1
+
+  # Public: Return the one-based frame index.
+  #
+  humanIndex: -> @index + 1
 
   # Public: Asynchronously collect n lines of context around the specified line number in this
   # frame's source file.

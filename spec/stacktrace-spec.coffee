@@ -55,6 +55,10 @@ describe 'Stacktrace', ->
         ]
         expect(functionNames).toEqual(expected)
 
+      it 'assigns an index to each frame', ->
+        positions = (frame.index for frame in trace.frames)
+        expect(positions).toEqual([0..4])
+
     describe 'registration', ->
       afterEach ->
         Stacktrace.clearRegistry()
