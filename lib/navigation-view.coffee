@@ -10,10 +10,10 @@ class NavigationView extends View
     activatedClass = if Stacktrace.getActivated()? then '' else 'inactive'
 
     @div class: "tool-panel panel-bottom padded stacktrace navigation #{activatedClass}", =>
-      @div class: 'trace-name', =>
+      @div class: 'inline-block trace-name', =>
         @h2 class: 'inline-block text-highlight message', outlet: 'message', click: 'backToTrace'
         @span class: 'inline-block icon icon-x', click: 'deactivateTrace'
-      @div class: 'current-frame unfocused', outlet: 'frameContainer', =>
+      @div class: 'inline-block current-frame unfocused', outlet: 'frameContainer', =>
         @span class: 'inline-block icon icon-code'
         @span class: 'inline-block function', outlet: 'frameFunction'
         @span class: 'inline-block index', outlet: 'frameIndex'
@@ -54,11 +54,13 @@ class NavigationView extends View
   useFrame: ({@frame, index, total}) ->
     @frameContainer.removeClass 'unfocused'
     @frameFunction.text @frame.functionName
+    @frameFunction.addClass 'highlight-info'
     @frameIndex.text index.toString()
     @frameTotal.text total.toString()
 
   unfocusFrame: ->
     @frameContainer.addClass 'unfocused'
+    @frameFunction.removeClass 'highlight-info'
 
   noFrame: ->
     @unfocusFrame()

@@ -48,8 +48,10 @@
 
   &.navigation {
     .trace-name {
+      margin-right: 30px;
+
       h2 {
-        margin: 0 15px 0 5px;
+        margin: 2px 15px 0 5px;
         font-weight: bold;
         cursor: pointer;
       }
@@ -58,19 +60,32 @@
         cursor: pointer;
       }
     }
-  }
 
-  .deactivate-control { display: none; }
+    .current-frame {
+      span.icon-code {
+        margin: 0;
+      }
 
-  &.activated {
-    .deactivate-control { display: block; }
-    .activate-control { display: none; }
+      &.unfocused {
+        color: @text-color-subtle;
+
+        span.function {
+          padding: 1px 3px;
+          font-weight: bold;
+        }
+      }
+    }
   }
 
 }
 
 .editor {
-  .line.line-stackframe {
+  .line.line-stackframe, .line.line-stackframe.cursor-line {
+    background: @stackframe-background;
+  }
+
+  // Work around some selector precedence issues.
+  &.is-focused .line.line-stackframe, &.is-focused .line.line-stackframe.cursor-line {
     background: @stackframe-background;
   }
 
