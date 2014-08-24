@@ -9,8 +9,9 @@ fixturePath = (p) ->
 
 frames = [
   new Frame('raw0', fixturePath('bottom.rb'), 12, 'botfunc')
-  new Frame('raw1', fixturePath('middle.rb'), 42,'midfunc')
+  new Frame('raw1', fixturePath('middle.rb'), 42, 'midfunc')
   new Frame('raw2', fixturePath('top.rb'), 37, 'topfunc')
+  new Frame('raw3', fixturePath('middle.rb'), 5, 'otherfunc')
 ]
 trace = new Stacktrace(frames, 'Boom')
 
@@ -63,36 +64,51 @@ describe 'NavigationView', ->
       [editor] = []
 
       beforeEach ->
-        waitsForPromise -> trace.frames[1].navigateTo()
+        waitsForPromise -> trace.frames[2].navigateTo()
 
         runs ->
           editor = atom.workspace.getActiveEditor()
 
       it 'shows the current frame and its index', ->
-        expect(view.find('.current-frame .function').text()).toBe('midfunc')
-        expect(view.find('.current-frame .index').text()).toBe('2')
-        expect(view.find('.current-frame .total').text()).toBe('3')
+        expect(view.find('.current-frame .function').text()).toBe('topfunc')
+        expect(view.find('.current-frame .index').text()).toBe('3')
+        expect(view.find('.current-frame .total').text()).toBe('4')
 
       it "navigates to the caller's frame", ->
         waitsForPromise -> view.navigateToCaller()
 
         runs ->
-          expect(view.frame).toBe(trace.frames[2])
+          expect(view.frame).toBe(trace.frames[3])
 
       it 'navigates to the called frame', ->
         waitsForPromise -> view.navigateToCalled()
 
         runs ->
-          expect(view.frame).toBe(trace.frames[0])
+          expect(view.frame).toBe(trace.frames[1])
+
+      it 'navigates back to the last active frame', ->
+        editor.setCursorBufferPosition [5, 0]
+        expect(view.find '.current-frame.unfocused').toHaveLength 1
+
+        waitsForPromise -> view.navigateToLastActive()
+
+        runs ->
+          expect(view.find '.current-frame.unfocused').toHaveLength 0
+          expect(editor.getCursorBufferPosition().row).toBe 36
 
     describe 'on an editor with multiple frames', ->
+      [editor] = []
 
-      it 'notices if you manually navigate to a different frame'
+      beforeEach ->
+        waitsForPromise -> trace.frames[1].navigateTo()
 
-    describe 'on an editor not corresponding to a frame', ->
+        runs ->
+          editor = atom.workspace.getActiveEditor()
 
-      it 'navigates back to the last active frame'
+      it 'notices if you manually navigate to a different frame', ->
+        expect(view.find('.current-frame.function').text()).toEqual 'midfunc'
 
-  describe 'without an active stacktrace', ->
+        editor.setCursorBufferPosition [4, 1]
 
-    it 'hides itself'
+        expect(view.frame).toBe(trace.frames[3])
+        expect(view.find('.current-frame.function').text()).toEqual 'otherfunc'

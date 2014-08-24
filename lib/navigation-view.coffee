@@ -107,4 +107,8 @@ class NavigationView extends View
       @frame = f
       @frame.navigateTo()
 
+  navigateToLastActive: ->
+    return unless @frame?
+    @frame.navigateTo()
+
 module.exports = NavigationView: NavigationView
