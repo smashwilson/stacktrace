@@ -2,10 +2,15 @@
 {Stacktrace, Frame} = require '../lib/stacktrace'
 {NavigationView} = require '../lib/navigation-view'
 
+path = require 'path'
+
+fixturePath = (p) ->
+  path.join __dirname, 'fixtures', p
+
 frames = [
-  new Frame('raw0', 'bottom.rb', 12, 'botfunc')
-  new Frame('raw1', 'middle.rb', 42, 'midfunc')
-  new Frame('raw2', 'top.rb', 37, 'topfunc')
+  new Frame('raw0', fixturePath('bottom.rb'), 12, 'botfunc')
+  new Frame('raw1', fixturePath('middle.rb'), 42,'midfunc')
+  new Frame('raw2', fixturePath('top.rb'), 37, 'topfunc')
 ]
 trace = new Stacktrace(frames, 'Boom')
 
@@ -64,9 +69,9 @@ describe 'NavigationView', ->
           editor = atom.workspace.getActiveEditor()
 
       it 'shows the current frame and its index', ->
-        expect(view.find('.current-frame.function').text()).toBe('midfunc')
-        expect(view.find('.current-frame.index').text()).toBe('2')
-        expect(view.find('.current-frame.total').text()).toBe('3')
+        expect(view.find('.current-frame .function').text()).toBe('midfunc')
+        expect(view.find('.current-frame .index').text()).toBe('2')
+        expect(view.find('.current-frame .total').text()).toBe('3')
 
       it 'navigates to the next frame'
 
