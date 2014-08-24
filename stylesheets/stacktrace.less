@@ -11,6 +11,7 @@
 .stacktrace {
   &.enter-dialog .editor {
     height: 300px;
+    max-height: 300px;
   }
 
   .frame .panel-heading {
@@ -37,21 +38,59 @@
     }
 
     .editor {
-      cursor: pointer;
+      .editor-contents {
+        cursor: pointer;
+      }
+      height: 175px;
+      max-height: 175px;
     }
   }
 
-  .deactivate-control { display: none; }
+  &.navigation {
+    .trace-name {
+      margin-right: 30px;
 
-  &.activated {
-    .deactivate-control { display: block; }
-    .activate-control { display: none; }
+      h2 {
+        margin: 2px 15px 0 5px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      span.icon-x {
+        font-size: 1.5em;
+        cursor: pointer;
+      }
+    }
+
+    .current-frame {
+      span.icon-code {
+        margin: 0;
+      }
+
+      &.unfocused {
+        color: @text-color-subtle;
+
+        span.function {
+          padding: 1px 3px;
+          font-weight: bold;
+
+          &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
   }
 
 }
 
 .editor {
-  .line.line-stackframe {
+  .line.line-stackframe, .line.line-stackframe.cursor-line {
+    background: @stackframe-background;
+  }
+
+  // Work around some selector precedence issues.
+  &.is-focused .line.line-stackframe, &.is-focused .line.line-stackframe.cursor-line {
     background: @stackframe-background;
   }
 

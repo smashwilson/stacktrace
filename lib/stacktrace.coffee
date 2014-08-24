@@ -19,6 +19,10 @@ class Stacktrace
   Emitter.extend this
 
   constructor: (@frames = [], @message = '') ->
+    i = 0
+    for f in @frames
+      f.index = i
+      i += 1
 
   # Internal: Compute the SHA256 checksum of the normalized stacktrace.
   #
@@ -64,6 +68,32 @@ class Stacktrace
       ACTIVE = null
       Stacktrace.emit 'active-changed', oldTrace: this, newTrace: null
 
+  # Public: Return the Frame corresponding to an Editor position, if any, along with its position
+  # within the trace.
+  #
+  # object - "position" should be a Point corresponding to a cursor position, and "path" the full
+  #          path of an Editor.
+  #
+  atEditorPosition: (editorPosition) ->
+    [index, total] = [1, @frames.length]
+    for frame in @frames
+      return frame if frame.isOn editorPosition
+      index += 1
+    return null
+
+  # Public: Return the Frame that called the given Frame, or undefined if given the top of the stack.
+  #
+  # frame - The current Frame to use as a reference point.
+  #
+  callerOf: (frame) -> @frames[frame.index + 1]
+
+  # Public: Return the Frame that a given Frame called into, or undefined if given the bottom of the
+  # stack.
+  #
+  # frame - The current Frame to use as a reference point.
+  #
+  calledFrom: (frame) -> @frames[frame.index - 1]
+
   # Public: Parse zero to many Stacktrace instances from a corpus of text.
   #
   # text - A raw blob of text.
@@ -74,10 +104,12 @@ class Stacktrace
 
   # Internal: Return a registered trace, or null if none match the provided
   # URL.
+  #
   @forUrl: (url) ->
     REGISTRY[url]
 
   # Internal: Clear the global trace registry.
+  #
   @clearRegistry: ->
     REGISTRY = {}
 
@@ -90,11 +122,16 @@ class Stacktrace
 class Frame
 
   constructor: (@rawLine, @rawPath, @lineNumber, @functionName) ->
+    @index = null
     @realPath = @rawPath
 
   # Public: Return the zero-indexed line number.
   #
   bufferLineNumber: -> @lineNumber - 1
+
+  # Public: Return the one-based frame index.
+  #
+  humanIndex: -> @index + 1
 
   # Public: Asynchronously collect n lines of context around the specified line number in this
   # frame's source file.
@@ -121,6 +158,11 @@ class Frame
         editorView = ev if ev.getEditor() is editor
       if editorView?
         editorView.scrollToBufferPosition position, center: true
+
+  # Public: Return true if the buffer position and path correspond to this Frame's line.
+  #
+  isOn: ({position, path}) ->
+    path is @realPath and position.row is @bufferLineNumber()
 
 
 module.exports =

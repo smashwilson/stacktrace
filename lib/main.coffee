@@ -1,6 +1,7 @@
 EnterDialog = require './enter-dialog'
 {Stacktrace} = require './stacktrace'
 {StacktraceView} = require './stacktrace-view'
+{NavigationView} = require './navigation-view'
 editorDecorator = require './editor-decorator'
 
 module.exports =
@@ -15,18 +16,21 @@ module.exports =
       atom.emit 'stacktrace:accept-trace', trace: text
 
     atom.workspace.eachEditor editorDecorator
-    Stacktrace.on 'active-changed', ->
+    @activeChanged = Stacktrace.on 'active-changed', ->
       editorDecorator(e) for e in atom.workspace.getEditors()
+
+    @navigationView = new NavigationView
+    atom.workspaceView.appendToBottom @navigationView
 
     StacktraceView.registerIn(atom.workspace)
 
-    atom.on 'stacktrace:accept-trace', ({trace}) =>
+    @acceptTrace = atom.on 'stacktrace:accept-trace', ({trace}) =>
       for trace in Stacktrace.parse(trace)
         trace.register()
         atom.workspace.open trace.getUrl()
 
   deactivate: ->
-    Stacktrace.off 'active-changed'
-    atom.off 'stacktrace:accept-trace'
+    @navigationView.remove()
 
-  serialize: ->
+    @activeChanged.off()
+    @acceptTrace.off()
