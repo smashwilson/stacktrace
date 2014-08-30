@@ -15,6 +15,12 @@ module.exports =
       text = (s.getText() for s in (selections or [])).join ''
       atom.emit 'stacktrace:accept-trace', trace: text
 
+    atom.workspaceView.command 'stacktrace:caller', ->
+      NavigationView.current()?.navigateToCaller()
+
+    atom.workspaceView.command 'stacktrace:follow-call', ->
+      NavigationView.current()?.navigateToCalled()
+
     atom.workspace.eachEditor editorDecorator
     @activeChanged = Stacktrace.on 'active-changed', ->
       editorDecorator(e) for e in atom.workspace.getEditors()

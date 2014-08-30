@@ -111,4 +111,7 @@ class NavigationView extends View
     return unless @frame?
     @frame.navigateTo()
 
+  @current: ->
+    atom.workspaceView.find('.stacktrace.navigation')?.view()
+
 module.exports = NavigationView: NavigationView
