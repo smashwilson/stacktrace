@@ -87,8 +87,9 @@ class FrameView extends View
       else
         editor = @source.getEditor()
         editor.setText lines.join("\n")
-        @marker = editor.markBufferRange [[traceLine, 0], [traceLine + 1, 0]], persistent: false
-        editor.decorateMarker @marker, type: 'line', class: 'trace-line'
+        range = editor.getBuffer().rangeForRow traceLine
+        @marker = editor.markBufferRange range
+        console.log editor.decorateMarker @marker, type: 'line', class: 'line-stackframe'
 
   beforeRemove: ->
     @marker.destroy() if @marker?
