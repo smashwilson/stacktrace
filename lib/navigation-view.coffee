@@ -1,5 +1,6 @@
 {View} = require 'atom'
 {Subscriber} = require 'emissary'
+_ = require 'underscore-plus'
 {Stacktrace} = require './stacktrace'
 
 class NavigationView extends View
@@ -22,10 +23,12 @@ class NavigationView extends View
       @div class: 'pull-right controls', =>
         @button class: 'inline-block btn', click: 'navigateToCaller', =>
           @span class: 'icon icon-arrow-up'
-          @text 'Caller'
+          @span 'Caller'
+          @span class: 'text-info button-label-up', outlet: 'upButtonLabel'
         @button class: 'inline-block btn', click: 'navigateToCalled', =>
+          @span class: 'text-info button-label-down', outlet: 'downButtonLabel'
+          @span 'Follow Call'
           @span class: 'icon icon-arrow-down'
-          @text 'Follow Call'
 
   initialize: ->
     @subscribe Stacktrace, 'active-changed', (e) =>
@@ -51,6 +54,17 @@ class NavigationView extends View
             if frame? then @useFrame(frame) else @unfocusFrame()
 
     if Stacktrace.getActivated? then @hide()
+
+    # Prepend keystroke glyphs to the up and down buttons.
+    upBindings = atom.keymap.findKeyBindings command: 'stacktrace:to-caller'
+    if upBindings.length > 0
+      binding = upBindings[0]
+      @upButtonLabel.text _.humanizeKeystroke binding.keystrokes
+
+    downBindings = atom.keymap.findKeyBindings command: 'stacktrace:follow-call'
+    if downBindings.length > 0
+      binding = downBindings[0]
+      @downButtonLabel.text _.humanizeKeystroke binding.keystrokes
 
   beforeRemove: ->
     @unsubscribe Stacktrace
@@ -110,5 +124,8 @@ class NavigationView extends View
   navigateToLastActive: ->
     return unless @frame?
     @frame.navigateTo()
+
+  @current: ->
+    atom.workspaceView.find('.stacktrace.navigation')?.view()
 
 module.exports = NavigationView: NavigationView
