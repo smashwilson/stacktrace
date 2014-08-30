@@ -3,6 +3,8 @@
 
 {Stacktrace, PREFIX} = require './stacktrace'
 
+existingViews = {}
+
 class StacktraceView extends View
 
   Subscriber.includeInto this
@@ -26,6 +28,7 @@ class StacktraceView extends View
 
   beforeRemove: ->
     @unsubscribe Stacktrace
+    delete existingViews[@trace]
 
   # Internal: Return the window title.
   #
@@ -38,7 +41,8 @@ class StacktraceView extends View
   @registerIn: (workspace) ->
     workspace.registerOpener (filePath) ->
       trace = Stacktrace.forUrl(filePath)
-      new StacktraceView(trace) if trace?
+      if trace?
+        existingViews[trace] ?= new StacktraceView(trace)
 
 
 class FrameView extends View
