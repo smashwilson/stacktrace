@@ -10,9 +10,27 @@ Given a stacktrace from a supported language, this package gives you:
    frame;
  * Highlighting and navigation tools to walk up and down the stack while you're
    looking at the full files.
- * Intelligent mappings from paths from other systems to yours. If it looks like
+ * *[planned]* Intelligent mappings from paths from other systems to yours. If it looks like
    a ruby gem path, it'll map into your `${GEM_HOME}`; if it looks like a
    virtualenv path, it'll map into your virtualenv.
+
+## Obligatory Animated Gif
+
+![walkthrough](https://cloud.githubusercontent.com/assets/17565/4100060/aa761e90-307e-11e4-83c8-e4bf04c20d95.gif)
+
+## Commands
+
+Stacktrace is a **Bring Your Own Keybinding** :tm: package. Rather than try to guess a set of bindings that won't collide with any other package, or that aren't six-key chords, I'm not providing any default keybindings.
+
+To set hotkeys for stacktrace commands, invoke `Application: Open Your Keymap` from the command palette, and add a section like this one:
+
+```coffee
+'.workspace':
+  'alt-s enter': 'stacktrace:from-selection'
+  'alt-s p': 'stacktrace:paste'
+  'alt-s up': 'stacktrace:to-caller'
+  'alt-s down': 'stacktrace:follow-call'
+```
 
 ## Countdown to 1.0
 
