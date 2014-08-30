@@ -152,10 +152,10 @@ describe 'Frame', ->
 
   beforeEach ->
     fixturePath = path.join __dirname, 'fixtures', 'context.txt'
+    frame = new Frame('five', fixturePath, 5, 'something')
 
   it 'acquires n lines of context asynchronously', ->
     [lines, traceLine] = []
-    frame = new Frame('five', fixturePath, 5, 'something')
 
     frame.getContext 2, (err, ls, lnum) ->
       throw err if err?
