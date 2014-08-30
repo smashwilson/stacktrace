@@ -4,17 +4,18 @@
 
 markers = []
 
-module.exports = (editor) ->
-  m.destroy() for m in markers
-  markers = []
+module.exports =
+  decorate: (editor) ->
+    active = Stacktrace.getActivated()
+    return unless active?
 
-  active = Stacktrace.getActivated()
-  return unless active?
+    for frame in active.frames
+      if frame.realPath is editor.getPath()
+        range = editor.getBuffer().rangeForRow frame.bufferLineNumber()
+        marker = editor.markBufferRange range, persistent: false
+        editor.decorateMarker marker, type: 'line', class: 'line-stackframe'
+        editor.decorateMarker marker, type: 'gutter', class: 'gutter-stackframe'
+        markers.push marker
 
-  for frame in active.frames
-    if frame.realPath is editor.getPath()
-      range = editor.getBuffer().rangeForRow frame.bufferLineNumber()
-      marker = editor.markBufferRange range
-      editor.decorateMarker marker, type: 'line', class: 'line-stackframe'
-      editor.decorateMarker marker, type: 'gutter', class: 'gutter-stackframe'
-      markers.push marker
+  cleanup: ->
+    m.destroy() for m in markers

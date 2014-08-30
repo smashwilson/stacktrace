@@ -2,7 +2,7 @@ path = require 'path'
 {Editor, WorkspaceView} = require 'atom'
 
 {Stacktrace, Frame} = require '../lib/stacktrace'
-editorDecorator = require '../lib/editor-decorator'
+{decorate, cleanup} = require '../lib/editor-decorator'
 
 framePath = (fname) -> path.join __dirname, 'fixtures', fname
 
@@ -37,7 +37,7 @@ describe 'editorDecorator', ->
     expect(Stacktrace.getActivated()).toBeNull()
 
     withEditorOn 'bottom.rb', ->
-      editorDecorator(editor)
+      decorate(editor)
       expect(editorView.find '.line.line-stackframe').toHaveLength 0
 
   describe 'with an active trace', ->
@@ -46,19 +46,19 @@ describe 'editorDecorator', ->
 
     it "does nothing if the file doesn't appear in the active trace", ->
       withEditorOn 'context.txt', ->
-        editorDecorator(editor)
+        decorate(editor)
         expect(editorView.find '.line.line-stackframe').toHaveLength 0
 
     it 'decorates stackframe lines in applicable editors', ->
       withEditorOn 'bottom.rb', ->
-        editorDecorator(editor)
+        decorate(editor)
         decorated = editorView.find '.line.line-stackframe'
         expect(decorated).toHaveLength 1
         expect(decorated.text()).toEqual("  puts 'this is the stack line'")
 
     it 'removes prior decorations when deactivated', ->
       withEditorOn 'bottom.rb', ->
-        editorDecorator(editor)
+        decorate(editor)
         trace.deactivate()
-        editorDecorator(editor)
+        cleanup()
         expect(editorView.find '.line.line-stackframe').toHaveLength 0

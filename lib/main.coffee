@@ -2,7 +2,7 @@ EnterDialog = require './enter-dialog'
 {Stacktrace} = require './stacktrace'
 {StacktraceView} = require './stacktrace-view'
 {NavigationView} = require './navigation-view'
-editorDecorator = require './editor-decorator'
+{decorate, cleanup} = require './editor-decorator'
 
 module.exports =
 
@@ -21,9 +21,11 @@ module.exports =
     atom.workspaceView.command 'stacktrace:follow-call', ->
       NavigationView.current()?.navigateToCalled()
 
-    atom.workspace.eachEditor editorDecorator
-    @activeChanged = Stacktrace.on 'active-changed', ->
-      editorDecorator(e) for e in atom.workspace.getEditors()
+    atom.workspace.eachEditor decorate
+    @activeChanged = Stacktrace.on 'active-changed', (e) ->
+      cleanup()
+      if e.newTrace?
+        decorate(e) for e in atom.workspace.getEditors()
 
     @navigationView = new NavigationView
     atom.workspaceView.appendToBottom @navigationView
