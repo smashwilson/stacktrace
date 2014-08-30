@@ -27,7 +27,9 @@ describe 'StacktraceView', ->
     expect(opener '/some/other/path').toBeUndefined()
 
     trace.register()
-    expect(opener(trace.getUrl()).trace).toBe(trace)
+    stv = opener(trace.getUrl())
+    expect(stv.trace).toBe(trace)
+    expect(opener(trace.getUrl())).toBe(stv)
 
   it 'shows the error message', ->
     text = view.find('.error-message').text()
