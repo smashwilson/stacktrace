@@ -15,7 +15,7 @@ module.exports =
       text = (s.getText() for s in (selections or [])).join ''
       atom.emit 'stacktrace:accept-trace', trace: text
 
-    atom.workspaceView.command 'stacktrace:caller', ->
+    atom.workspaceView.command 'stacktrace:to-caller', ->
       NavigationView.current()?.navigateToCaller()
 
     atom.workspaceView.command 'stacktrace:follow-call', ->
