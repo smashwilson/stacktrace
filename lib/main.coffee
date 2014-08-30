@@ -4,6 +4,8 @@ EnterDialog = require './enter-dialog'
 {NavigationView} = require './navigation-view'
 {decorate, cleanup} = require './editor-decorator'
 
+subs = []
+
 module.exports =
 
   activate: (state) ->
@@ -21,8 +23,8 @@ module.exports =
     atom.workspaceView.command 'stacktrace:follow-call', ->
       NavigationView.current()?.navigateToCalled()
 
-    atom.workspace.eachEditor decorate
-    @activeChanged = Stacktrace.on 'active-changed', (e) ->
+    subs.push atom.workspace.eachEditor decorate
+    subs.push Stacktrace.on 'active-changed', (e) ->
       cleanup()
       if e.newTrace?
         decorate(e) for e in atom.workspace.getEditors()
@@ -32,7 +34,7 @@ module.exports =
 
     StacktraceView.registerIn(atom.workspace)
 
-    @acceptTrace = atom.on 'stacktrace:accept-trace', ({trace}) =>
+    subs.push atom.on 'stacktrace:accept-trace', ({trace}) =>
       for trace in Stacktrace.parse(trace)
         trace.register()
         atom.workspace.open trace.getUrl()
@@ -40,5 +42,4 @@ module.exports =
   deactivate: ->
     @navigationView.remove()
 
-    @activeChanged.off()
-    @acceptTrace.off()
+    sub.off() for sub in subs
