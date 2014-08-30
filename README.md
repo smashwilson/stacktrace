@@ -32,6 +32,13 @@ To set hotkeys for stacktrace commands, invoke `Application: Open Your Keymap` f
   'alt-s down': 'stacktrace:follow-call'
 ```
 
+## Language Support
+
+Stacktraces are currently recognized in the following languages:
+
+ * Ruby
+ * (Java|Coffee)script
+
 ## Countdown to 1.0
 
 In the true spirit of README-driven development, these are the features that I'd
