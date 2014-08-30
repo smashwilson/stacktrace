@@ -1,5 +1,6 @@
 {View, EditorView} = require 'atom'
 {Subscriber} = require 'emissary'
+{chomp} = require 'line-chomper'
 
 {Stacktrace, PREFIX} = require './stacktrace'
 
@@ -59,6 +60,13 @@ class FrameView extends View
         @subview 'source', new EditorView(mini: true)
 
   initialize: (@frame, @navCallback) ->
+    chomp @frame.realPath, fromLine: 0, toLine: 100, (err, lines) =>
+      if err?
+        console.error err
+      else
+        grammar = atom.syntax.selectGrammar @frame.realPath, lines.join("\n")
+        @source.getEditor().setGrammar grammar
+
     @frame.getContext 3, (err, lines) =>
       if err?
         console.error err
