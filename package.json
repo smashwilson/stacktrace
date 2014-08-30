@@ -1,7 +1,7 @@
 {
   "name": "stacktrace",
   "main": "./lib/main",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Navigate stacktraces within Atom.",
   "activationEvents": [
     "stacktrace:paste",
