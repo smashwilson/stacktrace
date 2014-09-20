@@ -154,10 +154,7 @@ class Frame
     promise = atom.workspace.open @realPath, initialLine: position[0]
     promise.then (editor) ->
       editor.setCursorBufferPosition position
-      for ev in atom.workspaceView.getEditorViews()
-        editorView = ev if ev.getEditor() is editor
-      if editorView?
-        editorView.scrollToBufferPosition position, center: true
+      editor.scrollToBufferPosition position, center: true
 
   # Public: Return true if the buffer position and path correspond to this Frame's line.
   #
