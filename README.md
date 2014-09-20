@@ -14,6 +14,10 @@ Given a stacktrace from a supported language, this package gives you:
    a ruby gem path, it'll map into your `${GEM_HOME}`; if it looks like a
    virtualenv path, it'll map into your virtualenv.
 
+## Installation
+
+```apm install stacktrace```
+
 ## Obligatory Animated Gif
 
 ![walkthrough](https://cloud.githubusercontent.com/assets/17565/4100060/aa761e90-307e-11e4-83c8-e4bf04c20d95.gif)
