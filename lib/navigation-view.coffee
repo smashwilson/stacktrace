@@ -2,6 +2,7 @@
 {Subscriber} = require 'emissary'
 _ = require 'underscore-plus'
 {Stacktrace} = require './stacktrace'
+{CompositeDisposable} = require 'event-kit'
 
 class NavigationView extends View
 
@@ -31,27 +32,16 @@ class NavigationView extends View
           @span class: 'icon icon-arrow-down'
 
   initialize: ->
+    @subs = new CompositeDisposable
+
     @subscribe Stacktrace, 'active-changed', (e) =>
       if e.newTrace? then @useTrace(e.newTrace) else @noTrace()
 
     # Subscribe to opening editors. Set the current frame when a cursor is moved over a frame's
     # line.
-    atom.workspace.eachEditor (e) =>
-      @subscribe e, 'cursors-moved', =>
-        if @trace?
-          pos =
-            position: e.getCursorBufferPosition()
-            path: e.getPath()
-
-          # Allow the already-set @frame a chance to see if it still applies.
-          # This lets the caller and called navigation work properly, even if multiple frames are
-          # on the same line.
-          if @frame? and @frame.isOn(pos)
-            @useFrame(@frame)
-          else
-            # Otherwise, scan the trace for a matching frame.
-            frame = @trace.atEditorPosition(pos)
-            if frame? then @useFrame(frame) else @unfocusFrame()
+    @subs.add atom.workspace.observeTextEditors (e) =>
+      @updateTraceState(e)
+      @subs.add e.onDidChangeCursorPosition => @updateTraceState(e)
 
     if Stacktrace.getActivated? then @hide()
 
@@ -68,6 +58,23 @@ class NavigationView extends View
 
   beforeRemove: ->
     @unsubscribe Stacktrace
+    @subs.dispose()
+
+  updateTraceState: (editor) ->
+    if @trace?
+      pos =
+        position: editor.getCursorBufferPosition()
+        path: editor.getPath()
+
+      # Allow the already-set @frame a chance to see if it still applies.
+      # This lets the caller and called navigation work properly, even if multiple frames are
+      # on the same line.
+      if @frame? and @frame.isOn(pos)
+        @useFrame(@frame)
+      else
+        # Otherwise, scan the trace for a matching frame.
+        frame = @trace.atEditorPosition(pos)
+        if frame? then @useFrame(frame) else @unfocusFrame()
 
   useTrace: (@trace) ->
     @removeClass 'inactive'
