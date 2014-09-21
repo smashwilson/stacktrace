@@ -84,7 +84,6 @@ describe 'Stacktrace', ->
       afterEach ->
         activated = Stacktrace.getActivated()
         activated.deactivate() if activated?
-        Stacktrace.off 'active-changed'
 
       it 'can be activated', ->
         trace.activate()
@@ -99,9 +98,9 @@ describe 'Stacktrace', ->
         trace.deactivate()
         expect(Stacktrace.getActivated()).toBeNull()
 
-      it 'broadcasts a "active-changed" event', ->
+      it 'broadcasts an onDidChangeActive event', ->
         event = null
-        Stacktrace.on 'active-changed', (e) -> event = e
+        Stacktrace.onDidChangeActive (e) -> event = e
 
         trace.activate()
         expect(event.oldTrace).toBeNull()
