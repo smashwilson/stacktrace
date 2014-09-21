@@ -26,7 +26,7 @@ module.exports =
       NavigationView.current()?.navigateToCalled()
 
     subs.add atom.workspace.observeTextEditors decorate
-    subs.add Stacktrace.on 'active-changed', (e) ->
+    subs.add Stacktrace.onDidChangeActive (e) ->
       cleanup()
       if e.newTrace?
         decorate(e) for e in atom.workspace.getTextEditors()

@@ -1,6 +1,6 @@
 fs = require 'fs'
 
-{Emitter} = require 'emissary'
+{Emitter} = require 'event-kit'
 
 jsSHA = require 'jssha'
 {chomp} = require 'line-chomper'
@@ -11,12 +11,11 @@ PREFIX = 'stacktrace://trace'
 REGISTRY = {}
 ACTIVE = null
 
+emitter = new Emitter
+
 # Internal: A heuristically parsed and interpreted stacktrace.
 #
 class Stacktrace
-
-  # Turn the Stacktrace class into an emitter.
-  Emitter.extend this
 
   constructor: (@frames = [], @message = '') ->
     i = 0
@@ -59,14 +58,14 @@ class Stacktrace
     former = ACTIVE
     ACTIVE = this
     if former isnt ACTIVE
-      Stacktrace.emit 'active-changed', oldTrace: former, newTrace: ACTIVE
+      emitter.emit 'did-change-active', oldTrace: former, newTrace: ACTIVE
 
   # Public: Deactivate this trace if it's active.
   #
   deactivate: ->
     if ACTIVE is this
       ACTIVE = null
-      Stacktrace.emit 'active-changed', oldTrace: this, newTrace: null
+      emitter.emit 'did-change-active', oldTrace: this, newTrace: null
 
   # Public: Return the Frame corresponding to an Editor position, if any, along with its position
   # within the trace.
@@ -93,6 +92,15 @@ class Stacktrace
   # frame - The current Frame to use as a reference point.
   #
   calledFrom: (frame) -> @frames[frame.index - 1]
+
+  # Public: Subscribe to be notified when the active Stacktrace is set or cleared.
+  #
+  # callback - The callback to invoke with the oldTrace and newTrace.
+  #
+  # Returns a Disposable to cancel a subscription.
+  #
+  @onDidChangeActive: (callback) ->
+    emitter.on 'did-change-active', callback
 
   # Public: Parse zero to many Stacktrace instances from a corpus of text.
   #

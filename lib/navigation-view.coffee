@@ -1,12 +1,9 @@
 {View} = require 'atom'
-{Subscriber} = require 'emissary'
 _ = require 'underscore-plus'
 {Stacktrace} = require './stacktrace'
 {CompositeDisposable} = require 'event-kit'
 
 class NavigationView extends View
-
-  Subscriber.includeInto this
 
   @content: ->
     activatedClass = if Stacktrace.getActivated()? then '' else 'inactive'
@@ -34,7 +31,7 @@ class NavigationView extends View
   initialize: ->
     @subs = new CompositeDisposable
 
-    @subscribe Stacktrace, 'active-changed', (e) =>
+    @subs.add Stacktrace.onDidChangeActive (e) =>
       if e.newTrace? then @useTrace(e.newTrace) else @noTrace()
 
     # Subscribe to opening editors. Set the current frame when a cursor is moved over a frame's

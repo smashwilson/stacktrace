@@ -1,14 +1,12 @@
 {View, EditorView} = require 'atom'
-{Subscriber} = require 'emissary'
 {chomp} = require 'line-chomper'
+{CompositeDisposable} = require 'event-kit'
 
 {Stacktrace, PREFIX} = require './stacktrace'
 
 existingViews = {}
 
 class StacktraceView extends View
-
-  Subscriber.includeInto this
 
   @content: (trace) ->
     tclass = if trace.isActive() then 'activated' else ''
@@ -20,15 +18,17 @@ class StacktraceView extends View
           @subview 'frame', new FrameView frame, => trace.activate()
 
   initialize: (@trace) ->
+    @subs = new CompositeDisposable
+
     @uri = @trace.getUrl()
-    @subscribe Stacktrace, 'active-changed', (e) =>
+    @subs.add Stacktrace.onDidChangeActive (e) =>
       if e.newTrace is @trace
         @addClass 'activated'
       else
         @removeClass 'activated'
 
   beforeRemove: ->
-    @unsubscribe Stacktrace
+    @subs.dispose()
     delete existingViews[@trace]
 
   # Internal: Return the window title.
