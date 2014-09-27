@@ -155,11 +155,12 @@ describe 'Frame', ->
     frame = new Frame('five', fixturePath, 5, 'something')
 
   it 'acquires n lines of context asynchronously', ->
-    lines = null
+    [lines, traceLine] = []
 
-    frame.getContext 2, (err, ls) ->
+    frame.getContext 2, (err, ls, lnum) ->
       throw err if err?
       lines = ls
+      traceLine = lnum
 
     waitsFor -> lines?
 
@@ -170,6 +171,7 @@ describe 'Frame', ->
       expect(lines[2]).toEqual('five')
       expect(lines[3]).toEqual('six')
       expect(lines[4]).toEqual('')
+      expect(traceLine).toBe(2)
 
   describe 'recognizes itself in an Editor', ->
     it 'is on a cursor', ->
@@ -180,3 +182,39 @@ describe 'Frame', ->
 
     it 'is on a different file', ->
       expect(frame.isOn(position: Point.fromObject([4, 0]), path: 'some/other/path.rb')).toBeFalsy()
+
+  it 'identifies the trace line if the beginning is cut off', ->
+    [lines, traceLine] = []
+    frame = new Frame('two', fixturePath, 2, 'something')
+
+    frame.getContext 3, (err, ls, lnum) ->
+      throw err if err?
+      lines = ls
+      traceLine = lnum
+
+    waitsFor -> lines?
+
+    runs ->
+      expect(lines.length).toBe(5)
+      expect(lines[0]).toEqual('one')
+      expect(lines[4]).toEqual('five')
+      expect(traceLine).toBe(1)
+      expect(lines[1]).toEqual('two')
+
+  it 'identifies the trace line if the end is cut off', ->
+    [lines, traceLine] = []
+    frame = new Frame('nine', fixturePath, 9, 'something')
+
+    frame.getContext 3, (err, ls, lnum) ->
+      throw err if err?
+      lines = ls
+      traceLine = lnum
+
+    waitsFor -> lines?
+
+    runs ->
+      expect(lines.length).toBe(6)
+      expect(lines[0]).toEqual('six')
+      expect(lines[5]).toEqual('')
+      expect(traceLine).toBe(3)
+      expect(lines[3]).toEqual('nine')

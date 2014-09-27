@@ -81,11 +81,18 @@ class FrameView extends View
         grammar = atom.syntax.selectGrammar @frame.realPath, lines.join("\n")
         @source.getEditor().setGrammar grammar
 
-    @frame.getContext 3, (err, lines) =>
+    @frame.getContext 3, (err, lines, traceLine) =>
       if err?
         console.error err
       else
-        @source.getEditor().setText lines.join("\n")
+        editor = @source.getEditor()
+        editor.setText lines.join("\n")
+        range = editor.getBuffer().rangeForRow traceLine
+        @marker = editor.markBufferRange range
+        console.log editor.decorateMarker @marker, type: 'line', class: 'line-stackframe'
+
+  beforeRemove: ->
+    @marker.destroy() if @marker?
 
   navigate: ->
     @navCallback()

@@ -59,3 +59,6 @@ describe 'FrameView', ->
   it 'shows the function name', ->
     text = view.find('.function-name').text()
     expect(text).toEqual('midfunc')
+
+  it 'decorates the active line', ->
+    expect(view.find('.editor .line-stacktrace')).toHaveLength(1)
