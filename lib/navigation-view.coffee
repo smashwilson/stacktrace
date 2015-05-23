@@ -53,8 +53,7 @@ class NavigationView extends View
       binding = downBindings[0]
       @downButtonLabel.text _.humanizeKeystroke binding.keystrokes
 
-  beforeRemove: ->
-    @unsubscribe Stacktrace
+  detached: ->
     @subs.dispose()
 
   updateTraceState: (editor) ->

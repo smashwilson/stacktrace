@@ -1,26 +1,29 @@
 path = require 'path'
 
-{WorkspaceView} = require 'atom'
+{$} = require 'atom-space-pen-views'
 Stacktrace = require '../lib/main'
 
 describe "Main", ->
   activationPromise = null
+  workspaceElement = null
 
   beforeEach ->
-    atom.workspaceView = new WorkspaceView
+    workspaceElement = atom.views.getView(atom.workspace)
     activationPromise = atom.packages.activatePackage('stacktrace')
+
+    jasmine.attachToDOM(workspaceElement)
 
   describe 'when the stacktrace:paste event is triggered', ->
 
     beforeEach ->
-      atom.workspaceView.trigger 'stacktrace:paste'
+      atom.commands.dispatch workspaceElement, 'stacktrace:paste'
       waitsForPromise -> activationPromise
 
     it 'activates the package', ->
       expect(atom.packages.isPackageActive 'stacktrace').toBe(true)
 
     it 'displays the EnterDialog', ->
-      expect(atom.workspaceView.find '.enter-dialog').toExist()
+      expect($(workspaceElement).find '.enter-dialog').toExist()
 
   describe 'when the stacktrace:from-selection event is triggered', ->
 
@@ -33,7 +36,7 @@ describe "Main", ->
       runs ->
         editorPromise.then (editor) ->
           editor.setSelectedBufferRange [[1, 0], [7, 0]]
-          atom.workspaceView.trigger 'stacktrace:from-selection'
+          atom.commands.dispatch workspaceElement, 'stacktrace:from-selection'
 
       waitsForPromise -> activationPromise
 
@@ -41,4 +44,4 @@ describe "Main", ->
       expect(atom.packages.isPackageActive 'stacktrace').toBe(true)
 
     it 'displays a StacktraceView', ->
-      expect(atom.workspaceView.find '.traceview').toExist()
+      expect($(workspaceElement).find '.traceview').toExist()

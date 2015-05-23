@@ -1,3 +1,4 @@
+{CompositeDisposable} = require 'event-kit'
 {View, TextEditorView} = require 'atom-space-pen-views'
 
 class EnterDialog extends View
@@ -17,13 +18,15 @@ class EnterDialog extends View
           click: 'cancel'
         }, 'Cancel')
 
-  initialize: ->
+  initialize: (@pkg) ->
+    @subs = new CompositeDisposable()
+
     @traceEditor.focus()
 
-    @on 'core:cancel', => @cancel()
+    @subs.add atom.commands.add '.stacktrace.enter-dialog', 'core:cancel', => @cancel()
 
   traceIt: ->
-    atom.emit 'stacktrace:accept-trace', trace: @traceEditor.getText()
+    @pkg.acceptTrace @traceEditor.getText()
     @remove()
 
   cancel: -> @remove()

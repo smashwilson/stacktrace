@@ -11,19 +11,14 @@ subs = new CompositeDisposable()
 module.exports =
 
   activate: (state) ->
-    atom.workspaceView.command 'stacktrace:paste', ->
-      atom.workspaceView.appendToTop new EnterDialog()
-
-    atom.workspaceView.command 'stacktrace:from-selection', ->
-      selections = atom.workspace.getActiveEditor()?.getSelections()
-      text = (s.getText() for s in (selections or [])).join ''
-      atom.emit 'stacktrace:accept-trace', trace: text
-
-    atom.workspaceView.command 'stacktrace:to-caller', ->
-      NavigationView.current()?.navigateToCaller()
-
-    atom.workspaceView.command 'stacktrace:follow-call', ->
-      NavigationView.current()?.navigateToCalled()
+    subs.add atom.commands.add 'atom-workspace',
+      'stacktrace:paste': -> atom.workspace.addTopPanel item: new EnterDialog
+      'stacktrace:from-selection': =>
+        selections = atom.workspace.getActiveTextEditor()?.getSelections() or []
+        text = (s.getText() for s in selections).join ''
+        @acceptTrace(text)
+      'stacktrace:to-caller': -> NavigationView.current()?.navigateToCaller()
+      'stacktrace:follow-call': -> NavigationView.current()?.navigateToCalled()
 
     subs.add atom.workspace.observeTextEditors decorate
     subs.add Stacktrace.onDidChangeActive (e) ->
@@ -32,15 +27,20 @@ module.exports =
         decorate(e) for e in atom.workspace.getTextEditors()
 
     @navigationView = new NavigationView
-    atom.workspaceView.appendToBottom @navigationView
+    atom.workspace.addBottomPanel item: @navigationView
 
-    StacktraceView.registerIn(atom.workspace)
-
-    subs.add atom.on 'stacktrace:accept-trace', ({trace}) =>
-      for trace in Stacktrace.parse(trace)
-        trace.register()
-        atom.workspace.open trace.getUrl()
+    subs.add StacktraceView.registerIn(atom.workspace)
 
   deactivate: ->
     @navigationView.remove()
     subs.dispose()
+
+  # Public: Parse any and all stacktraces recognized from a sample of text. Open a new
+  # StacktraceView for each.
+  #
+  # trace [String] - A sample of text that may contain zero to many stacktraces in recognized
+  #  languages.
+  acceptTrace: (trace) ->
+    for trace in Stacktrace.parse(trace)
+      trace.register()
+      atom.workspace.open trace.getUrl()
