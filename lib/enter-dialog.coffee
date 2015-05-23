@@ -1,4 +1,4 @@
-{View, EditorView} = require 'atom'
+{View, TextEditorView} = require 'atom-space-pen-views'
 
 class EnterDialog extends View
 
@@ -6,7 +6,7 @@ class EnterDialog extends View
     @div class: 'stacktrace enter-dialog overlay from-top', =>
       @h2 class: 'text-info block', 'Paste a stacktrace here:'
       @div class: 'block', =>
-        @subview 'traceEditor', new EditorView(mini: true)
+        @subview 'traceEditor', new TextEditorView(mini: true)
       @div class: 'block padded', =>
         @button({
           class: 'btn btn-lg btn-primary inline-block',

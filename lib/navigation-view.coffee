@@ -1,4 +1,4 @@
-{View} = require 'atom'
+{View} = require 'atom-space-pen-views'
 _ = require 'underscore-plus'
 {Stacktrace} = require './stacktrace'
 {CompositeDisposable} = require 'event-kit'

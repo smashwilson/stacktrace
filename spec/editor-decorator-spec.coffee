@@ -1,5 +1,5 @@
 path = require 'path'
-{Editor, WorkspaceView} = require 'atom'
+{WorkspaceView} = require 'atom'
 
 {Stacktrace, Frame} = require '../lib/stacktrace'
 {decorate, cleanup} = require '../lib/editor-decorator'

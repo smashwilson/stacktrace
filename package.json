@@ -13,6 +13,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
+    "atom-space-pen-views": "^2.0.5",
     "emissary": "^1.2.1",
     "event-kit": "^0.7.2",
     "jssha": "^1.5.0",

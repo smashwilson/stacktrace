@@ -1,4 +1,4 @@
-{View, EditorView} = require 'atom'
+{View, TextEditorView} = require 'atom-space-pen-views'
 {chomp} = require 'line-chomper'
 {CompositeDisposable} = require 'event-kit'
 
@@ -71,7 +71,7 @@ class FrameView extends View
         @span class: 'source-location text-info inline-block pull-right', click: 'navigate', =>
           @text "#{frame.rawPath} @ #{frame.lineNumber}"
       @div class: 'panel-body padded', outlet: 'body', click: 'navigate', =>
-        @subview 'source', new EditorView(mini: true)
+        @subview 'source', new TextEditorView(mini: true)
 
   initialize: (@frame, @navCallback) ->
     chomp @frame.realPath, fromLine: 0, toLine: 100, (err, lines) =>
