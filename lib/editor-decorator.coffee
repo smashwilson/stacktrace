@@ -14,7 +14,7 @@ module.exports =
         range = editor.getBuffer().rangeForRow frame.bufferLineNumber()
         marker = editor.markBufferRange range, persistent: false
         editor.decorateMarker marker, type: 'line', class: 'line-stackframe'
-        editor.decorateMarker marker, type: 'gutter', class: 'gutter-stackframe'
+        editor.decorateMarker marker, type: 'line-number', class: 'line-number-stackframe'
         markers.push marker
 
   cleanup: ->
