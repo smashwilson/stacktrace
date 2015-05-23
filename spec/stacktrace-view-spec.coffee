@@ -20,7 +20,7 @@ describe 'StacktraceView', ->
   it 'registers an opener', ->
     opener = null
     mock =
-      registerOpener: (callback) -> opener = callback
+      addOpener: (callback) -> opener = callback
     StacktraceView.registerIn(mock)
 
     expect(opener).not.toBeNull()
