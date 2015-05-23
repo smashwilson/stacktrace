@@ -3,20 +3,26 @@
   "main": "./lib/main",
   "version": "0.0.1",
   "description": "Navigate stacktraces within Atom.",
-  "activationEvents": [
-    "stacktrace:paste",
-    "stacktrace:from-selection"
-  ],
+  "activationCommands": {
+    "atom-workspace": ["stacktrace:paste", "stacktrace:from-selection"]
+  },
   "repository": "https://github.com/smashwilson/stacktrace",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
   },
   "dependencies": {
+    "atom-space-pen-views": "^2.0.5",
     "emissary": "^1.2.1",
     "event-kit": "^0.7.2",
     "jssha": "^1.5.0",
     "line-chomper": "^0.4.5",
     "underscore-plus": "^1.5.1"
+  },
+  "providedServices": {
+    "stacktrace:accept-trace": {
+      "description": "Parse all stack traces recognized in sample of text and open a StacktraceView on each.",
+      "versions": { "1.0.0": "acceptTrace" }
+    }
   }
 }

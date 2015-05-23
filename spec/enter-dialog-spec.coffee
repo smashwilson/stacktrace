@@ -9,13 +9,12 @@ TRACE = """
 
 describe 'EnterDialog', ->
 
-  it 'emits a stacktrace:accept-trace event', ->
-    [event] = []
-    atom.on 'stacktrace:accept-trace', (e) => event = e
+  it 'calls an acceptTrace function', ->
+    txt = null
+    pkg = acceptTrace: (t) -> txt = t
 
-    d = new EnterDialog()
+    d = new EnterDialog(pkg)
     d.traceEditor.setText(TRACE)
     d.traceIt()
 
-    expect(event).toEqual
-      trace: TRACE
+    expect(txt).toEqual TRACE

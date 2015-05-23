@@ -1,4 +1,4 @@
-{WorkspaceView} = require 'atom'
+{$} = require 'atom-space-pen-views'
 {Stacktrace, Frame} = require '../lib/stacktrace'
 {NavigationView} = require '../lib/navigation-view'
 
@@ -19,16 +19,19 @@ describe 'NavigationView', ->
   [view] = []
 
   beforeEach ->
-    atom.workspaceView = new WorkspaceView
-    atom.workspaceView.attachToDom()
+    workspaceElement = atom.views.getView(atom.workspace)
     activationPromise = atom.packages.activatePackage('stacktrace')
 
-    atom.workspaceView.trigger 'stacktrace:paste'
+    jasmine.attachToDOM(workspaceElement)
+
+    atom.commands.dispatch workspaceElement, 'stacktrace:paste'
 
     waitsForPromise -> activationPromise
 
     runs ->
-      view = atom.workspaceView.find('.stacktrace.navigation').view()
+      panels = atom.workspace.getBottomPanels()
+      for panel in panels
+        view = panel.item if panel.item.hasClass 'navigation'
 
   afterEach ->
     Stacktrace.getActivated()?.deactivate()
@@ -54,7 +57,7 @@ describe 'NavigationView', ->
       waitsForPromise -> view.backToTrace()
 
       runs ->
-        expect(atom.workspaceView.getActiveView().hasClass 'traceview').toBeTruthy()
+        expect(atom.workspace.getActivePaneItem().hasClass 'traceview').toBeTruthy()
 
     it 'deactivates the trace', ->
       view.deactivateTrace()
@@ -67,7 +70,7 @@ describe 'NavigationView', ->
         waitsForPromise -> trace.frames[2].navigateTo()
 
         runs ->
-          editor = atom.workspace.getActiveEditor()
+          editor = atom.workspace.getActiveTextEditor()
 
       it 'shows the current frame and its index', ->
         expect(view.find('.current-frame .function').text()).toBe('topfunc')
@@ -103,7 +106,7 @@ describe 'NavigationView', ->
         waitsForPromise -> trace.frames[1].navigateTo()
 
         runs ->
-          editor = atom.workspace.getActiveEditor()
+          editor = atom.workspace.getActiveTextEditor()
 
       it 'notices if you manually navigate to a different frame', ->
         expect(view.find('.current-frame .function').text()).toEqual 'midfunc'

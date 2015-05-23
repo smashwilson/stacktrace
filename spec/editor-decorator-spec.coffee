@@ -1,6 +1,6 @@
 path = require 'path'
-{Editor, WorkspaceView} = require 'atom'
 
+{$} = require 'atom-space-pen-views'
 {Stacktrace, Frame} = require '../lib/stacktrace'
 {decorate, cleanup} = require '../lib/editor-decorator'
 
@@ -18,7 +18,10 @@ describe 'editorDecorator', ->
   [editor, editorView] = []
 
   beforeEach ->
-    atom.workspaceView = new WorkspaceView
+    workspaceElement = atom.views.getView(atom.workspace)
+    activationPromise = atom.packages.activatePackage('stacktrace')
+
+    jasmine.attachToDOM(workspaceElement)
 
   afterEach ->
     Stacktrace.getActivated()?.deactivate()
@@ -28,17 +31,19 @@ describe 'editorDecorator', ->
       atom.workspace.open(framePath fname)
 
     runs ->
-      atom.workspaceView.attachToDom()
-      editorView = atom.workspaceView.getActiveView()
-      editor = editorView.getEditor()
+      editor = atom.workspace.getActiveTextEditor()
+      editorView = atom.views.getView(editor)
+
       callback()
+
+  linesMatching = (selector) -> $(editorView.shadowRoot).find selector
 
   it 'does nothing if there is no active trace', ->
     expect(Stacktrace.getActivated()).toBeNull()
 
     withEditorOn 'bottom.rb', ->
       decorate(editor)
-      expect(editorView.find '.line.line-stackframe').toHaveLength 0
+      expect(linesMatching '.line.line-stackframe').toHaveLength 0
 
   describe 'with an active trace', ->
 
@@ -47,12 +52,12 @@ describe 'editorDecorator', ->
     it "does nothing if the file doesn't appear in the active trace", ->
       withEditorOn 'context.txt', ->
         decorate(editor)
-        expect(editorView.find '.line.line-stackframe').toHaveLength 0
+        expect(linesMatching '.line.line-stackframe').toHaveLength 0
 
     it 'decorates stackframe lines in applicable editors', ->
       withEditorOn 'bottom.rb', ->
         decorate(editor)
-        decorated = editorView.find '.line.line-stackframe'
+        decorated = linesMatching '.line.line-stackframe'
         expect(decorated).toHaveLength 1
         expect(decorated.text()).toEqual("  puts 'this is the stack line'")
 
@@ -61,4 +66,4 @@ describe 'editorDecorator', ->
         decorate(editor)
         trace.deactivate()
         cleanup()
-        expect(editorView.find '.line.line-stackframe').toHaveLength 0
+        expect($(editorView).find '.line.line-stackframe').toHaveLength 0
