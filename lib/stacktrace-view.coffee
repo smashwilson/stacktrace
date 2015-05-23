@@ -78,14 +78,14 @@ class FrameView extends View
       if err?
         console.error err
       else
-        grammar = atom.syntax.selectGrammar @frame.realPath, lines.join("\n")
-        @source.getEditor().setGrammar grammar
+        grammar = atom.grammars.selectGrammar @frame.realPath, lines.join("\n")
+        @source.getModel().setGrammar grammar
 
     @frame.getContext 3, (err, lines) =>
       if err?
         console.error err
       else
-        @source.getEditor().setText lines.join("\n")
+        @source.getModel().setText lines.join("\n")
 
   navigate: ->
     @navCallback()
