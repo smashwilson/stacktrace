@@ -43,12 +43,12 @@ class NavigationView extends View
     if Stacktrace.getActivated? then @hide()
 
     # Prepend keystroke glyphs to the up and down buttons.
-    upBindings = atom.keymap.findKeyBindings command: 'stacktrace:to-caller'
+    upBindings = atom.keymaps.findKeyBindings command: 'stacktrace:to-caller'
     if upBindings.length > 0
       binding = upBindings[0]
       @upButtonLabel.text _.humanizeKeystroke binding.keystrokes
 
-    downBindings = atom.keymap.findKeyBindings command: 'stacktrace:follow-call'
+    downBindings = atom.keymaps.findKeyBindings command: 'stacktrace:follow-call'
     if downBindings.length > 0
       binding = downBindings[0]
       @downButtonLabel.text _.humanizeKeystroke binding.keystrokes
