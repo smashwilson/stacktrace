@@ -1,10 +1,13 @@
 {
   "name": "stacktrace",
   "main": "./lib/main",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Navigate stacktraces within Atom.",
   "activationCommands": {
-    "atom-workspace": ["stacktrace:paste", "stacktrace:from-selection"]
+    "atom-workspace": [
+      "stacktrace:paste",
+      "stacktrace:from-selection"
+    ]
   },
   "repository": "https://github.com/smashwilson/stacktrace",
   "license": "MIT",
@@ -22,7 +25,9 @@
   "providedServices": {
     "stacktrace:trace-handler": {
       "description": "Parse all stack traces recognized in sample of text and open a StacktraceView on each.",
-      "versions": { "1.0.0": "traceHandlerV1" }
+      "versions": {
+        "1.0.0": "traceHandlerV1"
+      }
     }
   }
 }
