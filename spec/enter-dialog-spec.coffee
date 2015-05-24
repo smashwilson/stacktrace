@@ -11,7 +11,8 @@ describe 'EnterDialog', ->
 
   it 'calls an acceptTrace function', ->
     txt = null
-    pkg = acceptTrace: (t) -> txt = t
+    pkg = traceHandlerV1: ->
+      acceptTrace: (t) -> txt = t
 
     d = new EnterDialog(pkg)
     d.traceEditor.setText(TRACE)
