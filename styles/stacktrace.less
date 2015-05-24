@@ -1,12 +1,4 @@
-// The ui-variables file is provided by base themes provided by Atom.
-//
-// See https://github.com/atom/atom-dark-ui/blob/master/stylesheets/ui-variables.less
-// for a full listing of what's available.
-@import "ui-variables";
-@import "syntax-variables";
-
-@stackframe-background: mix(@background-color-info, @syntax-background-color, 40%);
-@stackframe-gutter-background: mix(@background-color-info, @syntax-gutter-background-color, 40%);
+@import "variables";
 
 .stacktrace {
   &.enter-dialog .editor {
@@ -90,19 +82,4 @@
     }
   }
 
-}
-
-atom-editor {
-  .line.line-stackframe, .line.line-stackframe.cursor-line {
-    background: @stackframe-background;
-  }
-
-  // Work around some selector precedence issues.
-  &.is-focused .line.line-stackframe, &.is-focused .line.line-stackframe.cursor-line {
-    background: @stackframe-background;
-  }
-
-  .gutter .line-number-stackframe {
-    background: @stackframe-gutter-background;
-  }
 }

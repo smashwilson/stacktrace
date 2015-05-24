@@ -1,0 +1,14 @@
+@import "variables";
+
+.line.line-stackframe, .line.line-stackframe.cursor-line {
+  background: @stackframe-background;
+}
+
+// Work around some selector precedence issues.
+&.is-focused .line.line-stackframe, &.is-focused .line.line-stackframe.cursor-line {
+  background: @stackframe-background;
+}
+
+.gutter .line-number-stackframe {
+  background: @stackframe-gutter-background;
+}
