@@ -1,7 +1,7 @@
 @import "variables";
 
 .stacktrace {
-  &.enter-dialog .editor {
+  &.enter-dialog atom-text-editor {
     height: 300px;
     max-height: 300px;
   }
@@ -29,12 +29,14 @@
       .icon-fold { display: none; }
     }
 
-    .editor {
-      .editor-contents {
-        cursor: pointer;
-      }
+    atom-text-editor {
       height: 175px;
       max-height: 175px;
+      cursor: pointer;
+    }
+
+    atom-text-editor::shadow .scroll-view {
+      cursor: pointer;
     }
   }
 
