@@ -26,7 +26,7 @@ class EnterDialog extends View
     @subs.add atom.commands.add '.stacktrace.enter-dialog', 'core:cancel', => @cancel()
 
   traceIt: ->
-    @pkg.acceptTrace @traceEditor.getText()
+    @pkg.traceHandlerV1().acceptTrace @traceEditor.getText()
     @remove()
 
   cancel: -> @remove()

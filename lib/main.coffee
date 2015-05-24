@@ -12,11 +12,11 @@ module.exports =
 
   activate: (state) ->
     subs.add atom.commands.add 'atom-workspace',
-      'stacktrace:paste': -> atom.workspace.addTopPanel item: new EnterDialog
+      'stacktrace:paste': => atom.workspace.addTopPanel item: new EnterDialog(this)
       'stacktrace:from-selection': =>
         selections = atom.workspace.getActiveTextEditor()?.getSelections() or []
         text = (s.getText() for s in selections).join ''
-        @acceptTrace(text)
+        @traceHandlerV1().acceptTrace(text)
       'stacktrace:to-caller': -> NavigationView.current()?.navigateToCaller()
       'stacktrace:follow-call': -> NavigationView.current()?.navigateToCalled()
 
@@ -35,12 +35,17 @@ module.exports =
     @navigationView.remove()
     subs.dispose()
 
-  # Public: Parse any and all stacktraces recognized from a sample of text. Open a new
-  # StacktraceView for each.
+  # Public: Construct a service object that implements the stacktrace parsing service.
   #
-  # trace [String] - A sample of text that may contain zero to many stacktraces in recognized
-  #  languages.
-  acceptTrace: (trace) ->
-    for trace in Stacktrace.parse(trace)
-      trace.register()
-      atom.workspace.open trace.getUrl()
+  traceHandlerV1: ->
+
+    # Public: Parse any and all stacktraces recognized from a sample of text. Open a new
+    # StacktraceView for each.
+    #
+    # trace [String] - A sample of text that may contain zero to many stacktraces in recognized
+    #  languages.
+    #
+    acceptTrace: (trace) ->
+      for trace in Stacktrace.parse(trace)
+        trace.register()
+        atom.workspace.open trace.getUrl()

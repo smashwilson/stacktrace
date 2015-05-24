@@ -20,9 +20,9 @@
     "underscore-plus": "^1.5.1"
   },
   "providedServices": {
-    "stacktrace:accept-trace": {
+    "stacktrace:trace-handler": {
       "description": "Parse all stack traces recognized in sample of text and open a StacktraceView on each.",
-      "versions": { "1.0.0": "acceptTrace" }
+      "versions": { "1.0.0": "traceHandlerV1" }
     }
   }
 }
